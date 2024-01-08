@@ -1,0 +1,132 @@
+# ./src/IR.py
+from dataclasses import dataclass, field
+from typing import List, Optional, Union, Any
+
+from dateutil.parser import parse as parse_date
+
+from src.TaxReturns.helpers.aztronic import get_client
+from src.TaxReturns.helpers.utils import parse_to_brl, format_br_doc
+
+
+def get_client_email(cnpj_cpf):
+    email = get_client(cnpj_cpf)
+    return email['cliente']['email']
+
+
+@dataclass
+class Participante:
+    cnpj_cpf: str
+    nome: str
+    participacao: float
+
+    def __post_init__(self):
+        self.email = get_client_email(self.cnpj_cpf)
+        self.cnpj_cpf = format_br_doc(self.cnpj_cpf)
+
+    def to_json(self):
+        return {
+            "name": self.nome,
+            "documentNumber": self.cnpj_cpf,
+            "participation": self.participacao,
+            "email": self.email
+        }
+
+
+@dataclass
+class Pagamento:
+    mes: int
+    valor_pago: float
+
+    def __post_init__(self):
+        if self.mes > 1:
+            self.valor_pago = 0.0
+
+    def to_json(self):
+        return {
+            'creditDate': f'{self.mes}/2022',
+            'payedInstallment': f"{self.mes} - Mensal",
+            'amoutPayed': parse_to_brl(self.valor_pago)
+        }
+
+
+@dataclass
+class Informeiro:
+    empresa: str
+    cnpj_cpf: str
+    dt_contrato: str
+    saldo: float
+    participantes: List[Participante]
+    pagamentos: List[Pagamento]
+
+
+@dataclass
+class IR:
+    data: Informeiro
+    contract_info: dict
+    receiver_info: dict
+    installments: Optional[list] = field(default_factory=list)
+    participants: Optional[list] = field(default_factory=list)
+    emails: Optional[list] = field(default_factory=list)
+
+    def make_participants(self):
+        participants = []
+        for participant in self.data.participantes:
+            self.emails.append(participant.email)
+            participants.append(participant.to_json())
+        return participants
+
+
+    def to_json(self):
+        it = [installment.to_json() for installment in self.data.pagamentos][0]['amoutPayed']
+        self.data.saldo = it
+        self.saldo = it
+        self.contract_info['saldo'] = it
+        return {
+            "installments": [installment.to_json() for installment in self.data.pagamentos],
+            "participants": self.make_participants(),
+            "contractInfo": self.contract_info,
+            "receiverInfo": self.receiver_info
+        }
+
+
+def parse_json(data: dict) -> IR:
+    informeiro_data = data['informeir']['informeir']
+    contrato = data['contrato']
+
+    participantes = [Participante(**participante) for participante in informeiro_data['participantes']]
+    pagamentos = [Pagamento(**pagamento) for pagamento in informeiro_data['pagamentos']]
+    saldo = pagamentos[0].valor_pago
+
+    ir_info = Informeiro(
+        empresa=informeiro_data['empresa'],
+        cnpj_cpf=informeiro_data['cnpj_empresa'],
+        dt_contrato=informeiro_data['dt_contrato'],
+        saldo=saldo,
+        participantes=participantes,
+        pagamentos=pagamentos
+    )
+
+    contract_info = {
+        'EMPREENDIMENTO': contrato['empreendimento'],
+        'CONTRATO': contrato['id_contrato'],
+        'ANO BASE': '2022',
+        'BLOCO': contrato['bloco'],
+        'UNIDADE': contrato['unidade'],
+        'DATA': parse_date(contrato['data_contrato']).strftime("%d/%m/%Y"),
+        'EMAIL': 'lucas@pontte.com.br',
+        'SALDO': saldo
+    }
+    print("________________________________________________________________")
+    print("ir_info",ir_info)
+    _obj = {
+        "data": ir_info,
+        "contract_info": contract_info,
+        "receiver_info": {
+            "receiver": "MAUÁ CAPITAL REAL ESTATE DEBT III \n FUNDO DE INVESTIMENTO MULTIMERCADO",
+            "cnpj": "30.982.547/0001-09",
+            "address": "Av. Brg. Faria Lima, 1485 - 18º andar - Pinheiros, São Paulo - SP, 01452-002",
+            # todo check date
+            "date": "SÃO PAULO, 05 DE FEVEREIRO DE 2023"
+        }
+    }
+    return IR(**_obj)
