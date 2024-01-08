@@ -4,15 +4,47 @@ Description: >
   api-taxreturns
 
   Sample SAM Template for api-taxreturns
-Globals:
-  Function:
-    Timeout: 3
-    MemorySize: 128
+Parameters:
+  Stage:
+    Type: String
+    Description: The stage of the application (e.g., dev, staging, prod)
 
-    LoggingConfig:
-      LogFormat: JSON
 Resources:
-  HelloWorldFunction:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaS3DynamoDBAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: 
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-${Stage}/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: 
+                  - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
+
+  TaxReturn:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: taxreturns/
@@ -26,27 +58,21 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+      Role: !GetAtt LambdaExecutionRole.Arn
 
-  ApplicationResourceGroup:
-    Type: AWS::ResourceGroups::Group
+
+  TaxReturnGeneratePDF:
+    Type: AWS::Serverless::Function 
     Properties:
-      Name:
-        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
-      ResourceQuery:
-        Type: CLOUDFORMATION_STACK_1_0
-  ApplicationInsightsMonitoring:
-    Type: AWS::ApplicationInsights::Application
-    Properties:
-      ResourceGroupName:
-        Ref: ApplicationResourceGroup
-      AutoConfigurationEnabled: 'true'
-Outputs:
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+      CodeUri: taxreturns/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+      - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+      Role: !GetAtt LambdaExecutionRole.Arn
