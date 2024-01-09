@@ -47,7 +47,7 @@ Resources:
   TaxReturn:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: taxreturns/
+      CodeUri: src/TaxReturns
       Handler: app.lambda_handler
       Runtime: python3.9
       Architectures:
@@ -56,23 +56,8 @@ Resources:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /tax-returns
+            Method: post
       Role: !GetAtt LambdaExecutionRole.Arn
 
 
-  TaxReturnGeneratePDF:
-    Type: AWS::Serverless::Function 
-    Properties:
-      CodeUri: taxreturns/
-      Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-      - x86_64
-      Events:
-        HelloWorld:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: get
-      Role: !GetAtt LambdaExecutionRole.Arn
