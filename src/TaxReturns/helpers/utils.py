@@ -3,12 +3,6 @@
 #     return "R$ {:,.2f}".format(value)
 import re
 
-from .aztronic import get_client
-
-
-def get_client_email(cnpj_cpf):
-    email = get_client(cnpj_cpf)
-    return email['cliente']['email']
 
 
 # def parse_to_brl(num):
