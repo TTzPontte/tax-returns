@@ -44,12 +44,13 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
-  TaxReturn:
+  TaxReturns:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/TaxReturns
-      Handler: app.lambda_handler
+      Handler: appHandler.handler
       Runtime: python3.9
+      Timeout: 30
       Architectures:
       - x86_64
       Events:

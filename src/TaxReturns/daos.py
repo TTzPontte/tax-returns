@@ -1,6 +1,8 @@
 import json
 import requests as re
-from env import AZT_API_TOKEN
+
+AZT_API_TOKEN='QVotQVBJS0VZOjZCRjRDNDg5LTFCREEtNDc3QS05MTA4LTNGRUY0NUZCRTU4OQ=='
+
 class AztronicDao:
     def get_data(self, id, operation):
         payload = {"idContract": id, "action": operation, "env": "dev"}
@@ -10,14 +12,15 @@ class AztronicDao:
         ).json()
 
     def get_ir(self, uuid):
-        header = {
-            'Authorization': f'Basic {AZT_API_TOKEN}',
-            'Content-Type': 'application/json'
-        }
-        endpoint = f'https://srv1.aztronic.com.br/az/apicollect/api/cliente/GetInformeIR/{uuid}/2022'
-        print(re.get(endpoint, headers=header))
-
-        return re.get(endpoint, headers=header).json()
+        print(uuid)
+        # header = {
+        #     'Authorization': f'Basic {AZT_API_TOKEN}',
+        #     'Content-Type': 'application/json'
+        # }
+        # endpoint = f'https://srv1.aztronic.com.br/az/apicollect/api/cliente/GetInformeIR/{uuid}/2022'
+        # print(re.get(endpoint, headers=header))
+        #
+        # return re.get(endpoint, headers=header).json()
 
     def get_client(self, cpf_cnpj):
         header = {

@@ -2,20 +2,16 @@ import json
 import logging
 from http import HTTPStatus
 
-import src.layers.common.config
-
-from src.layers.common.handlerbase import Handler, Result
-from src.layers.common.errors import AppException, Errors
-from src.TaxReturns.app import lambda_handler
-from daos import AztronicDao
+from app import lambda_handler
+from layers.common.config import LOGGING_LEVEL
+from layers.common.errors import AppException, Errors
+from layers.common.handlerbase import Result, Handler
 
 logger = logging.getLogger(__name__)
-logger.setLevel(src.layers.common.config.LOGGING_LEVEL)
-
+logger.setLevel(LOGGING_LEVEL)
 
 class TaxReturns(Handler):
     def pre_process(self):
-        print(self.event["body"])
         if self.event["body"]:
             self.event["body"] = json.dumps(self.event["body"])
 
@@ -28,9 +24,9 @@ class TaxReturns(Handler):
             raise AppException(Errors.PROPERTIES_MISSING, properties=",".join(errors))
 
     def handler(self):
-        self.event["body"] = json.loads(self.event["body"])
-        body = self.event["body"]
-        contract_id = body.get("contractId")
+        data = json.loads(self.event["body"])
+        body_data = json.loads(data)
+        contract_id = body_data.get("contractId")
 
         execution = lambda_handler(contract_id, {})
         if execution is not None:
@@ -46,7 +42,7 @@ def handler(event, context):
     return TaxReturns(event, context).run()
 
 
-if __name__ == '__main__':
-    x = handler({"body": {"contractId": "129246"}}, {})
-
-print(x)
+# if __name__ == '__main__':
+#     x = handler({"body": {"contractId": "129246"}}, {})
+#
+# print(x)
