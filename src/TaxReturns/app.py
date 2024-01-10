@@ -60,7 +60,8 @@ class Facade:
 
 
 def lambda_handler(event, context):
-    az_contract_id = event.get('body').get('contractId')
+    az_contract_id = event
+    print(event)
     facade = Facade(az_contract_id)
     facade.process()
     return {
