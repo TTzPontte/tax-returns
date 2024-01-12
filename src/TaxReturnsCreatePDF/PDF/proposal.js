@@ -32,7 +32,7 @@ const receiverSection = ({
   layout,
   margin: [0, 20, 0, 0]
 });
-const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumber = '06.109.309/0001-09', participation = '0%' }) => ({
+const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumber = '06.109.309/0001-09', participationPercentage = '0%' }) => ({
   style: 'proposalTable',
   table: {
     headerRows: 0,
@@ -40,7 +40,7 @@ const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumb
     body: [
       ['NOME', name],
       ['CPF/CNPJ', documentNumber],
-      ['PARTICIPAÇÃO', formatValue(formatPercentage(participation))]
+      ['PARTICIPAÇÃO', formatValue(formatPercentage(participationPercentage))]
     ]
   },
   layout,

@@ -36,11 +36,18 @@ const HeaderTitle = () => ({
 });
 
 const IntroductionPage = ({ contractInfo }) => {
-  const buildHeaderList = list => list.map(i => ({ title: i, value: contractInfo[i] }));
-  contractInfo['DATA DO CONTRATO'] = contractInfo['DATA']; // @TODO TechDEBT: A LITTLE DIRTY HACK DUE IR 2023 TIME
-
-  const row2 = buildHeaderList(['BLOCO', 'UNIDADE', 'DATA DO CONTRATO']);
-  const row1 = buildHeaderList(['EMPREENDIMENTO', 'CONTRATO', 'ANO BASE']);
+  const buildHeaderList = (list, titleMap) => list.map(i => ({ title: titleMap[i] || i, value: contractInfo[i] }));
+  const titleMap = {
+    block: 'Bloco',
+    unit: 'Unidade',
+    date: 'Data',
+    development: 'Desenvolvimento',
+    contractNumber: 'Número do Contrato',
+    baseYear: 'Ano Base'
+  };
+    
+  const row2 = buildHeaderList(['block', 'unit', 'date'], titleMap);
+  const row1 = buildHeaderList(['development', 'contractNumber', 'baseYear'], titleMap);
   const buildHeader = () => [buildHeaderRow(row1), buildHeaderRow(row2)];
 
   return {

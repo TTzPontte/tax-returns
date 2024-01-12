@@ -41,11 +41,11 @@ const createRow = ({ installments = [] }) => {
 
   const data = installments.map(installmentItem => {
     if (installmentItem) {
-      const { creditDate, payedInstallment, amoutPayed } = installmentItem;
+      const { creditDate, paidInstallment, amountPaid } = installmentItem;
       return [
         { text: creditDate, ...options },
-        { text: 'Entrada / Mensal / Intermediária / Final', ...options },
-        { text: amoutPayed, ...options }
+        { text: paidInstallment, ...options },
+        { text: amountPaid, ...options }
       ];
     }
   });
@@ -53,14 +53,14 @@ const createRow = ({ installments = [] }) => {
   return data;
 };
 
-const totalFooter = ({ total }) => [
+const totalFooter = ({ balance }) => [
   { fillColor: $WHITE, text: '' },
   {
     fillColor: $GRAY_1,
     text: 'Total',
     alignment: 'center'
   },
-  { fillColor: $GRAY_1, text: formatMoney(total), alignment: 'center' }
+  { fillColor: $GRAY_1, text: formatMoney(balance), alignment: 'center' }
 ];
 const installmentsTable = ({ installments, total = '10000000,00000' }) => ({
   style: 'proposalTable',
@@ -75,9 +75,9 @@ const installmentsTable = ({ installments, total = '10000000,00000' }) => ({
   pageBreak: 'after'
 });
 
-const installmentsPage = ({ proposal: { installment: installments }, contractInfo: { SALDO: saldo, TOTAL: total } }) => ({
+const installmentsPage = ({ proposal: { installment: installments }, contractInfo: { balance = '0,00', total = 'undefined' } }) => ({
   stack: [
-    createHeadline(`DEMONSTRATIVO DE VALORES PAGOS\n SALDO DEVEDOR EM 31/12/2022 ${saldo}`),
+    createHeadline(`DEMONSTRATIVO DE VALORES PAGOS\n SALDO DEVEDOR EM 31/12/2023 ${balance}`),
     installmentsTable({
       installments,
       total

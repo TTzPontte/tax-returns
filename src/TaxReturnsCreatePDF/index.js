@@ -1,5 +1,3 @@
-const fs = require("fs");
-const path = require("path");
 const AWS = require("aws-sdk");
 const { generateTaxReturnPdf } = require("./PDF");
 
@@ -7,8 +5,7 @@ const s3 = new AWS.S3();
 
 exports.handler = async (event, context) => {
   const parsedEvent = JSON.parse(event.body);
-  const { contractInfo, participants, receiverInfo, installments } = parsedEvent;
-
+  const [{ contractInfo, participants, receiverInfo, installments }] = parsedEvent.data;
   try {
     const pdfBuffer = await generateTaxReturnPdf({
       contractInfo,
@@ -19,11 +16,11 @@ exports.handler = async (event, context) => {
       },
     });
 
-    const s3FileName = "helloworld.pdf";
+    const s3FileName = `${contractInfo.development}.pdf`;
 
     const s3Params = {
       Bucket: "taxreturns-frontend-storage-73711795134329-staging",
-      Key: "public/lucas-pontte.com.br/" + s3FileName,
+      Key: "public/IR2023/" + s3FileName,
       Body: pdfBuffer,
       ContentType: "application/pdf",
     };
