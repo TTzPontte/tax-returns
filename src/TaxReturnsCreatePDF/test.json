@@ -1,0 +1,34 @@
+{
+   "body":{
+      "data":{
+         "contractInfo":{
+            "EMPREENDIMENTO":"PONTTE - HOME EQUITY",
+            "CONTRATO":"129259",
+            "ANO BASE":"2020",
+            "BLOCO":"ÚNICO",
+            "UNIDADE":"31",
+            "DATA":"25/02/2021"
+         },
+         "installments":[
+            {
+               "creditDate":"30/12/2020",
+               "payedInstallment":"12 - Mensal.",
+               "amoutPayed":"R$ 18.822,13"
+            }
+         ],
+         "participants":[
+            {
+               "name":"PADANIA CONSULTORIA EIRELI",
+               "documentNumber":"06.109.309/0001-09",
+               "participation":"0%"
+            }
+         ],
+         "receiverInfo":{
+            "receiver":"MAUÁ CAPITAL REAL ESTATE DEBT III \n FUNDO DE INVESTIMENTO MULTIMERCADO",
+            "cnpj":"30.982.547/0001-09",
+            "address":"AV BRIGADEIRO FARIA LIMA, 2277 - SÃO PAULO",
+            "date":"SÃO PAULO, 05 DE FEVEREIRO DE 2021"
+         }
+      }
+   }
+}

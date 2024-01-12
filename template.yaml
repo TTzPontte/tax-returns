@@ -44,35 +44,35 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
-  TaxReturn:
-    Type: AWS::Serverless::Function 
-    Properties:
-      CodeUri: taxreturns/
-      Handler: app.lambda_handler
-      Runtime: python3.9
-      Architectures:
-      - x86_64
-      Events:
-        HelloWorld:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: get
-      Role: !GetAtt LambdaExecutionRole.Arn
+  # TaxReturn:
+  #   Type: AWS::Serverless::Function 
+  #   Properties:
+  #     CodeUri: taxreturns/
+  #     Handler: app.lambda_handler
+  #     Runtime: python3.9
+  #     Architectures:
+  #     - x86_64
+  #     Events:
+  #       HelloWorld:
+  #         Type: Api
+  #         Properties:
+  #           Path: /hello
+  #           Method: get
+  #     Role: !GetAtt LambdaExecutionRole.Arn
 
 
   TaxReturnGeneratePDF:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: taxreturns/
-      Handler: app.lambda_handler
-      Runtime: python3.9
+      CodeUri: src/TaxReturnsCreatePDF
+      Handler: index.handler
+      Runtime: nodejs16.x
       Architectures:
       - x86_64
       Events:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /test
+            Method: post
       Role: !GetAtt LambdaExecutionRole.Arn
