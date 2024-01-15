@@ -4,7 +4,7 @@ const { generateTaxReturnPdf } = require("./PDF");
 const s3 = new AWS.S3();
 
 exports.handler = async (event, context) => {
-  const parsedEvent = JSON.parse(event.body);
+  const parsedEvent = event
   const [{ contractInfo, participants, receiverInfo, installments }] = parsedEvent.data;
   try {
     const pdfBuffer = await generateTaxReturnPdf({
@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
 
     const s3Params = {
       Bucket: "taxreturns-frontend-storage-73711795134329-staging",
-      Key: "public/IR2023/" + s3FileName,
+      Key: "/public/IR2023/" + s3FileName,
       Body: pdfBuffer,
       ContentType: "application/pdf",
     };
