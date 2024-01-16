@@ -1,18 +1,10 @@
 # ./src/IR.py
 from dataclasses import dataclass, field
-from typing import List, Optional, Union, Any
+from typing import List, Optional
 
 from dateutil.parser import parse as parse_date
-
-from src.TaxReturns.helpers.aztronic import get_client
-from src.TaxReturns.helpers.utils import parse_to_brl, format_br_doc
-
-
-def get_client_email(cnpj_cpf):
-    email = get_client(cnpj_cpf)
-    return email['cliente']['email']
-
-
+from helpers.utils import parse_to_brl, format_br_doc
+from daos import AztronicDao
 @dataclass
 class Participante:
     cnpj_cpf: str
@@ -20,7 +12,8 @@ class Participante:
     participacao: float
 
     def __post_init__(self):
-        self.email = get_client_email(self.cnpj_cpf)
+        aztronic_dao = AztronicDao()
+        self.email = aztronic_dao.get_client_email(self.cnpj_cpf)
         self.cnpj_cpf = format_br_doc(self.cnpj_cpf)
 
     def to_json(self):
@@ -107,14 +100,14 @@ def parse_json(data: dict) -> IR:
     )
 
     contract_info = {
-        'EMPREENDIMENTO': contrato['empreendimento'],
-        'CONTRATO': contrato['id_contrato'],
-        'ANO BASE': '2022',
-        'BLOCO': contrato['bloco'],
-        'UNIDADE': contrato['unidade'],
-        'DATA': parse_date(contrato['data_contrato']).strftime("%d/%m/%Y"),
-        'EMAIL': 'lucas@pontte.com.br',
-        'SALDO': saldo
+        'development': contrato['empreendimento'],
+        'contractNumber': contrato['id_contrato'],
+        'baseYear': '2022',
+        'block': contrato['bloco'],
+        'unit': contrato['unidade'],
+        'date': parse_date(contrato['data_contrato']).strftime("%d/%m/%Y"),
+        'email': 'lucas@pontte.com.br',
+        'balance': saldo
     }
     print("________________________________________________________________")
     print("ir_info",ir_info)
