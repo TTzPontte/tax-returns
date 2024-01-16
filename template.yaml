@@ -1,16 +1,27 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  api-taxreturns
-
   Sample SAM Template for api-taxreturns
+
 Parameters:
   Stage:
     Type: String
     Description: The stage of the application (e.g., dev, staging, prod)
+    Default: staging
+
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - test
+      - prod
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, prod]
 
 Resources:
-  LambdaExecutionRole:
+  GeneralExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -32,8 +43,10 @@ Resources:
                   - s3:ListBucket
                   - s3:GetObject
                   - s3:PutObject
-                Resource: 
-                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-${Stage}/*"
+                Resource:
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-staging/*"
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev/*"
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev-*"
               - Effect: Allow
                 Action:
                   - dynamodb:PutItem
@@ -44,21 +57,91 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
+  LambdaS3DynamoDBAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetObject
+              - s3:PutObject
+            Resource: 
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-staging/*"
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev/*"
+                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev-*"
+          - Effect: Allow
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+            Resource: 
+              - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
+
+  APIDomainName:
+    Type: "AWS::ApiGateway::DomainName"
+    Properties:
+      DomainName: !If [IsProd, "api-taxreturns.pontte.com.br", !Sub "api-taxreturns-${Environment}.pontte.com.br"]
+      CertificateArn: "arn:aws:acm:us-east-1:848638426587:certificate/639f5ab2-c77a-4f62-8250-c85716a6753f"
+
+  CloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
+
   TaxReturnGeneratePDF:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: src/TaxReturnsCreatePDF
+      FunctionName: !Sub "TaxReturnGeneratePDF-${Stage}"
       Handler: index.handler
       Runtime: nodejs16.x
       Architectures:
-      - x86_64
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Sub "TaxReturns-${Environment}" 
+
       Events:
-        HelloWorld:
+        CreateTaxReturn:
           Type: Api
           Properties:
-            Path: /test
+            Path: /tax-returns/pdf
             Method: post
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Policies:
+        - !Ref LambdaS3DynamoDBAccessPolicy
+
+  TaxReturnsDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "TaxReturnsDynamo-${Stage}"
+      AttributeDefinitions:
+        - AttributeName: TaxReturnId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: TaxReturnId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
   TaxReturns:
     Type: AWS::Serverless::Function 
@@ -75,6 +158,4 @@ Resources:
           Properties:
             Path: /tax-returns
             Method: post
-      Role: !GetAtt LambdaExecutionRole.Arn
-
-
+      Role: !GetAtt ExecutionRole.Arn
