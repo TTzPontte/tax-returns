@@ -1,0 +1,38 @@
+{
+  "name": "common-layer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^6.7.1",
+    "@hapi/joi": "^17.1.1",
+    "aws-sdk": "^2.505.0",
+    "aws-xray-sdk": "^2.5.0",
+    "axios": "^0.21.1",
+    "cpf-cnpj-validator": "^1.0.3",
+    "crypto": "^1.0.1",
+    "dynamoose": "^1.10.0",
+    "form-data": "^3.0.0",
+    "fuzzball": "^2.0.2",
+    "graphql": "^15.5.0",
+    "graphql-request": "^3.4.0",
+    "http-errors": "^1.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "jszip": "^3.2.2",
+    "lodash": "^4.17.13",
+    "mailchimp-api-v3": "^1.14.0",
+    "mandrill-api": "^1.0.45",
+    "md5": "^2.3.0",
+    "middy": "^0.29.0",
+    "moment": "^2.27.0",
+    "moment-business-days": "^1.2.0",
+    "pdfmake": "^0.1.72",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {}
+}

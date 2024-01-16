@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   api-taxreturns
-
   Sample SAM Template for api-taxreturns
+
 Parameters:
   Stage:
     Type: String
@@ -44,23 +44,6 @@ Resources:
                 Resource: 
                   - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
-  # TaxReturn:
-  #   Type: AWS::Serverless::Function 
-  #   Properties:
-  #     CodeUri: taxreturns/
-  #     Handler: app.lambda_handler
-  #     Runtime: python3.9
-  #     Architectures:
-  #     - x86_64
-  #     Events:
-  #       HelloWorld:
-  #         Type: Api
-  #         Properties:
-  #           Path: /hello
-  #           Method: get
-  #     Role: !GetAtt LambdaExecutionRole.Arn
-
-
   TaxReturnGeneratePDF:
     Type: AWS::Serverless::Function 
     Properties:
@@ -68,7 +51,7 @@ Resources:
       Handler: index.handler
       Runtime: nodejs16.x
       Architectures:
-      - x86_64
+        - x86_64
       Events:
         HelloWorld:
           Type: Api
@@ -76,3 +59,14 @@ Resources:
             Path: /test
             Method: post
       Role: !GetAtt LambdaExecutionRole.Arn
+      Layers:
+        - !Ref TaxReturnsPDFLayer
+
+  TaxReturnsPDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub "TaxReturnsPDFLayer-${Stage}"
+      Description: Layer com dependências necessárias IR.
+      ContentUri: ./src/layers/TaxReturnsCreatePDF
+      CompatibleRuntimes:
+        - node16.x
