@@ -3,7 +3,7 @@
 #     return "R$ {:,.2f}".format(value)
 import re
 
-from src.TaxReturns.helpers.aztronic import get_client
+from .aztronic import get_client
 
 
 # def parse_to_brl(num):

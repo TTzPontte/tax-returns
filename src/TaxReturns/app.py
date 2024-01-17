@@ -3,8 +3,8 @@
 from dataclasses import field, dataclass
 from IR import parse_json
 from helpers.aztronic import get_ir, get_data
-from src.Models.client import GqlClient
-from src.Models.dao import TaxReturnsFacade
+from Models.client import GqlClient
+from Models.dao import TaxReturnsFacade
 
 
 # from helpers.PDF import generate_pdf

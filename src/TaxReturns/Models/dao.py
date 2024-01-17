@@ -173,8 +173,7 @@ class TaxReturnsFacade:
             unit=contract_info_data["unit"],
         )
 
-        # contract_info_id = self.create_contract_info(contract_info)
-        contract_info_id = 'a3440cda-e484-40cc-8316-0cb57ffd8967'
+        contract_info_id = self.create_contract_info(contract_info)
         print(contract_info_id)
         if contract_info_id:
             # Set the contract ID
@@ -182,11 +181,10 @@ class TaxReturnsFacade:
 
             # Extract participants and create participants
             participants_data = event['participants']
-            # self.create_participants(participants_data, contract_info_id)
+            self.create_participants(participants_data, contract_info_id)
 
             # Extract installments and create installments
             installments_data = event['installments']
-            print(installments_data)
             self.create_installments(installments_data, contract_info_id)
 
 
