@@ -1,5 +1,3 @@
-// to package within lamba uncon
-// const PdfPrinter = require('../../layers/common/node_modules/pdfmake');
 const PdfPrinter = require('/opt/node_modules/pdfmake');
 const { footer, header } = require('./header-footer');
 const { proposalPage } = require('./proposal');
@@ -19,7 +17,7 @@ const fonts = {
 };
 
 const buildContent = ({ proposal, contractInfo }) => [
-  IntroductionPage({ contractInfo }), // intro(),
+  IntroductionPage({ contractInfo }),
   proposalPage({ proposal }),
   installmentsPage({ proposal, contractInfo })
 ];

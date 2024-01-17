@@ -159,8 +159,6 @@ class TaxReturnsFacade:
                 logging.error("Installment creation failed.")
 
     def create_contract_info_with_participants_and_with_installments(self, event):
-        print("chegou nos dados")
-
         contract_info_data = event['contractInfo']
         contract_info = ContractInfo(
             balance=contract_info_data["balance"],
@@ -174,7 +172,6 @@ class TaxReturnsFacade:
         )
 
         contract_info_id = self.create_contract_info(contract_info)
-        print(contract_info_id)
         if contract_info_id:
             # Set the contract ID
             self.contract_id = contract_info_id

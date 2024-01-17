@@ -7,9 +7,6 @@ from Models.client import GqlClient
 from Models.dao import TaxReturnsFacade
 
 
-# from helpers.PDF import generate_pdf
-# from helpers.utils import csv_to_json
-
 @dataclass
 class Facade:
     az_contract_id: str
@@ -22,8 +19,6 @@ class Facade:
         self.id_list = [self.az_contract_id]
 
     def process(self):
-        print('process')
-        print(self.id_list)
         for id_ in self.id_list:
             print("---", id_, "---")
             self._current_id = str(id_)
@@ -44,27 +39,10 @@ class Facade:
             current_pdf = ir
             current_pdf_info = current_pdf.to_json()
 
-            print("eh pra entrar nos dados ------------")
             gql_client = GqlClient()
 
             dao = TaxReturnsFacade(gql_client)
             dao.create_contract_info_with_participants_and_with_installments(current_pdf_info)
-
-    # def make_pdfs(self):
-    #         b12 = generate_pdf([current_pdf_info], API_TOKEN)
-    #         data = b12.get('data', {})
-    #         url = data.get('url', "").split("?")[0]
-    #         return_obj = {
-    #             "url": url,
-    #             "id": contrato.get('id_contrato'),
-    #             "total": current_pdf_info['contractInfo'].get('SALDO'),
-    #         }
-    #         index = 0
-    #         for email in current_pdf.emails:
-    #             index += 1
-    #             return_obj[f'participant_{index}'] = email
-    #         self.response_list.append(return_obj)
-
 
 def lambda_handler(event, context):
     az_contract_id = event

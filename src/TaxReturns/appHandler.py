@@ -25,8 +25,6 @@ class TaxReturns(Handler):
             raise AppException(Errors.PROPERTIES_MISSING, properties=",".join(errors))
 
     def handler(self):
-        print(self.event["body"])
-
         data = json.loads(self.event["body"])
         data_parsed = json.loads(data)
         contract_id = data_parsed.get("contractId")
@@ -42,7 +40,6 @@ class TaxReturns(Handler):
 
 
 def handler(event, context):
-    print('bora')
     return TaxReturns(event, context).run()
 
 

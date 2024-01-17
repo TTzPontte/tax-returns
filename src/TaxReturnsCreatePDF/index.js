@@ -5,8 +5,43 @@ const s3 = new AWS.S3();
 
 exports.handler = async (event, context) => {
   const parsedEvent = event;
-  const [{ contractInfo, participants, receiverInfo, installments }] =
-    parsedEvent.data;
+  
+  const {
+    data: {
+      getContractInfo: {
+        total,
+        email,
+        development,
+        date,
+        contractNumber,
+        block,
+        baseYear,
+        balance,
+        unit,
+        Installments: { items: installments },
+        Participants: { items: participants },
+      },
+    },
+  } = parsedEvent;
+  
+  const contractInfo = {
+    total,
+    email,
+    development,
+    date,
+    contractNumber,
+    block,
+    baseYear,
+    balance,
+    unit
+  };
+
+  const receiverInfo ={
+    "receiver": "MAUÁ CAPITAL REAL ESTATE DEBT III | Investment Multimarket Fund",
+    "cnpj": "30.982.547/0001-09",
+    "address": "AV BRIGADEIRO FARIA LIMA, 2277 - SÃO PAULO",
+    "date": "SÃO PAULO, 05 DE FEVEREIRO DE 2021"
+  }  
 
   // Verificar se a variável TABLE_NAME contém "DEV", "STAGING" ou "PROD"
   const environment = process.env.TABLE_NAME.includes("dev")
@@ -26,7 +61,6 @@ exports.handler = async (event, context) => {
       })();
 
   if (environment instanceof Object) {
-    // Se o ambiente não for encontrado, retorne o erro
     return environment;
   }
 
@@ -50,8 +84,6 @@ exports.handler = async (event, context) => {
         : environment === "prod"
         ? ""
         : "";
-
-        console.log(s3Bucket)
 
     const s3Params = {
       Bucket: s3Bucket,
