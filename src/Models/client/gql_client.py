@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import requests
 
-from .config import CONFIG
+from config import CONFIG
 
 logging.basicConfig(level=logging.INFO)
 

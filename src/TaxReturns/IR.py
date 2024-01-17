@@ -3,8 +3,9 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from dateutil.parser import parse as parse_date
-from helpers.utils import parse_to_brl, format_br_doc
-from daos import AztronicDao
+from helpers.utils import parse_to_brl, format_br_doc, get_client_email
+
+
 @dataclass
 class Participante:
     cnpj_cpf: str
@@ -12,8 +13,7 @@ class Participante:
     participacao: float
 
     def __post_init__(self):
-        aztronic_dao = AztronicDao()
-        self.email = aztronic_dao.get_client_email(self.cnpj_cpf)
+        self.email = get_client_email(self.cnpj_cpf)
         self.cnpj_cpf = format_br_doc(self.cnpj_cpf)
 
     def to_json(self):

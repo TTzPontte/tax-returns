@@ -1,4 +1,3 @@
-0
 import logging
 import os
 

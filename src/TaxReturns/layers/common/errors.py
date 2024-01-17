@@ -2,8 +2,7 @@
 
 from enum import Enum
 from http import HTTPStatus
-
-from ..common import handlerbase
+from . import handlerbase
 
 class OpErrors(Enum):
     """Lista de errors de operação """

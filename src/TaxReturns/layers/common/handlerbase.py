@@ -5,10 +5,13 @@ import json
 import logging
 from dataclasses import dataclass
 from http import HTTPStatus
-from ..common import config, errors
+
+from . import errors
+from .config import LOGGING_LEVEL, AWS_SAM_LOCAL
+
 
 logger = logging.getLogger(__name__) # pylint: disable=invalid-name
-logger.setLevel(config.LOGGING_LEVEL)
+logger.setLevel(LOGGING_LEVEL)
 
 def convert_header_lowercase(event: object):
     """Converte os nomes dos cabeçalhos para minúsculo.
@@ -112,16 +115,16 @@ class Handler():
         print(self)
 
 
-        if config.AWS_SAM_LOCAL:
-            logger.debug("AWS_SAM_LOCAL: %s", config.AWS_SAM_LOCAL)
+        if AWS_SAM_LOCAL:
+            logger.debug("AWS_SAM_LOCAL: %s", AWS_SAM_LOCAL)
 
         try:
-            if config.AWS_SAM_LOCAL:
+            if AWS_SAM_LOCAL:
                 self.aws_local_preprocess()
 
             self.pre_process()
 
-            if not config.AWS_SAM_LOCAL:
+            if not AWS_SAM_LOCAL:
                 self.check_authorization()
 
             self.validate()

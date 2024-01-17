@@ -1,8 +1,10 @@
 # ./src/main.py
 
 from dataclasses import field, dataclass
-from daos import AztronicDao
 from IR import parse_json
+from helpers.aztronic import get_ir, get_data
+
+
 # from helpers.PDF import generate_pdf
 # from helpers.utils import csv_to_json
 
@@ -19,13 +21,12 @@ class Facade:
         self.id_list = [self.az_contract_id]
 
     def process(self):
-        aztronic_dao = AztronicDao()
         for id_ in self.id_list:
             print("---", id_, "---")
             self._current_id = str(id_)
-            ir = aztronic_dao.get_ir(self._current_id)
+            ir = get_ir(self._current_id)
             print(ir)
-            info = aztronic_dao.get_data(self._current_id, 'getFinances')
+            info = get_data(self._current_id, 'getFinances')
             self._ir_list.append([ir, info])
 
     def make_data(self):
@@ -72,5 +73,4 @@ if __name__ == '__main__':
     x = lambda_handler({'body': {
         'contractId': '129246'
     }}, {})
-
     print(x)
