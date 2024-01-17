@@ -1,6 +1,5 @@
 import logging
 from dataclasses import dataclass
-from src.a__old__.Models.client.gql_client import GqlClient
 from mutations import (
     gql_mutation_create_contract,
     gql_mutation_create_installment,

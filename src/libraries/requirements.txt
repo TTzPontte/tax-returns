@@ -1,0 +1,8 @@
+# Requirements staging
+boto3
+botocore
+requests
+openpyxl
+python-dateutil
+pandas
+python-dotenv

@@ -2,10 +2,7 @@
 import json
 
 import requests as re
-
-from src.TaxReturns.env import AZT_API_TOKEN
-
-
+AZT_API_TOKEN='QVotQVBJS0VZOjZCRjRDNDg5LTFCREEtNDc3QS05MTA4LTNGRUY0NUZCRTU4OQ=='
 def get_data(id, operation):
     payload = {"idContract": id, "action": operation, "env": "dev"}
     return re.post(

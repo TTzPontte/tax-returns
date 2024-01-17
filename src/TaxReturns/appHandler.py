@@ -4,7 +4,8 @@ from http import HTTPStatus
 
 from app import lambda_handler
 from layers.common.config import LOGGING_LEVEL
-from layers.common.errors import AppException, Errors
+from layers.common.errors import Errors, AppException
+
 from layers.common.handlerbase import Result, Handler
 
 logger = logging.getLogger(__name__)
@@ -24,11 +25,14 @@ class TaxReturns(Handler):
             raise AppException(Errors.PROPERTIES_MISSING, properties=",".join(errors))
 
     def handler(self):
-        data = json.loads(self.event["body"])
-        body_data = json.loads(data)
-        contract_id = body_data.get("contractId")
+        print(self.event["body"])
 
-        execution = lambda_handler(contract_id, {})
+        data = json.loads(self.event["body"])
+        data_parsed = json.loads(data)
+        contract_id = data_parsed.get("contractId")
+        if contract_id:
+            execution = lambda_handler(contract_id, {})
+
         if execution is not None:
             return Result(HTTPStatus.OK, execution)
         else:
@@ -44,5 +48,3 @@ def handler(event, context):
 
 # if __name__ == '__main__':
 #     x = handler({"body": {"contractId": "129246"}}, {})
-#
-# print(x)
