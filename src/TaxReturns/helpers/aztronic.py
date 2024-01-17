@@ -16,8 +16,6 @@ def get_ir(uuid):
         'Authorization': f'Basic {AZT_API_TOKEN}',
         'Content-Type': 'application/json'
     }
-
-    print(uuid)
     endpoint = f'https://srv1.aztronic.com.br/az/apicollect/api/cliente/GetInformeIR/{uuid}/2022'
     return re.get(endpoint, headers=header).json()
 

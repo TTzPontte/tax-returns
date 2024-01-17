@@ -1,2 +1,2 @@
 from .gql_client import *
-from config import *
+from .config import *

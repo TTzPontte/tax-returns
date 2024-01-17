@@ -3,6 +3,8 @@
 #     return "R$ {:,.2f}".format(value)
 import re
 
+from src.TaxReturns.helpers.aztronic import get_client
+
 
 # def parse_to_brl(num):
 #     if num == 0:
@@ -19,8 +21,8 @@ def parse_to_brl(f):
     else:
         return 'R$ ' + '{:,.2f}'.format(f)
 
-def get_client_email(self, cnpj_cpf):
-    email = self.get_client(cnpj_cpf)
+def get_client_email(cnpj_cpf):
+    email = get_client(cnpj_cpf)
     return email['cliente']['email']
 
 

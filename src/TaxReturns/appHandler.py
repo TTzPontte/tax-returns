@@ -27,10 +27,8 @@ class TaxReturns(Handler):
     def handler(self):
         print(self.event["body"])
 
-        data = json.loads(self.event["body"])  # Parse JSON string into a dictionary
-        data_dict = json.loads(data)
-        contract_id = data_dict.get("contractId")  # Use get() on the dictionary
-
+        data = json.loads(self.event["body"])
+        contract_id = data.get("contractId")
         if contract_id:
             execution = lambda_handler(contract_id, {})
 
@@ -47,6 +45,5 @@ def handler(event, context):
     return TaxReturns(event, context).run()
 
 
-# if __name__ == '__main__':
-#     x = handler({"body": {"contractId": "129246"}}, {})
-# print(x)
+if __name__ == '__main__':
+    x = handler({"body": {"contractId": "129246"}}, {})

@@ -1,8 +1,8 @@
 import logging
 from dataclasses import dataclass
 
-from client import GqlClient
-from mutations import (
+from .client import GqlClient
+from .mutations import (
     gql_mutation_create_contract,
     gql_mutation_create_installment,
     gql_mutation_create_participant,
@@ -83,18 +83,17 @@ class ParticipantsDao:
 
 @dataclass
 class InstallmentInfo:
-    amountPayed: float
+    amoutPayed: str
     creditDate: str
     payedInstallment: str
-    contractinfoID: str
 
 
 @dataclass
 class InstallmentsDao:
     gql_client: GqlClient
 
-    def create_installment(self, installment_info: InstallmentInfo) -> dict:
-        variables = installment_info.__dict__
+    def create_installment(self, installment_info) -> dict:
+        variables = installment_info
         try:
             result = self.gql_client.post(gql_mutation_create_installment, variables)
             return result.get("createInstallments", {})
@@ -127,7 +126,7 @@ class TaxReturnsFacade:
                 name=participant_data["name"],
                 email=participant_data["email"],
                 documentNumber=participant_data["documentNumber"],
-                participationPercentage=participant_data["participationPercentage"],
+                participationPercentage=participant_data["participation"],
                 contract_info_id=contract_info_id,
             )
 
@@ -146,7 +145,13 @@ class TaxReturnsFacade:
         for installment_data in installments_data:
             installment_info = InstallmentInfo(**installment_data)
             installment_info.contractinfoID = contract_info_id  # Set contract info ID
-            created_installment = installments_dao.create_installment(installment_info)
+            amount_payed_parsed = installment_info.amoutPayed.replace("R$", "").replace(",", ".")
+            installment_info.amoutPayed = float(amount_payed_parsed)
+            installment_info_clone = installment_info.__dict__.copy()
+            installment_info_clone['amountPayed'] = installment_info_clone['amoutPayed']
+            installment_info_clone.pop('amoutPayed', None)
+
+            created_installment = installments_dao.create_installment(installment_info_clone)
 
             if created_installment:
                 logging.info(f"Installment created: {created_installment.get('id')}")
@@ -154,30 +159,34 @@ class TaxReturnsFacade:
                 logging.error("Installment creation failed.")
 
     def create_contract_info_with_participants_and_with_installments(self, event):
-        # Create contract info
+        print("chegou nos dados")
+
+        contract_info_data = event['contractInfo']
         contract_info = ContractInfo(
-            balance=event["balance"],
-            block=event["block"],
-            base_year=event["baseYear"],
-            contract_number=event["contractNumber"],
-            date=event["date"],
-            development=event["development"],
-            email=event["email"],
-            unit=event["unit"],
+            balance=contract_info_data["balance"],
+            block=contract_info_data["block"],
+            base_year=contract_info_data["baseYear"],
+            contract_number=contract_info_data["contractNumber"],
+            date=contract_info_data["date"],
+            development=contract_info_data["development"],
+            email=contract_info_data["email"],
+            unit=contract_info_data["unit"],
         )
 
-        contract_info_id = self.create_contract_info(contract_info)
-
+        # contract_info_id = self.create_contract_info(contract_info)
+        contract_info_id = 'a3440cda-e484-40cc-8316-0cb57ffd8967'
+        print(contract_info_id)
         if contract_info_id:
             # Set the contract ID
             self.contract_id = contract_info_id
 
             # Extract participants and create participants
-            participants_data = event.get("Participants", [])
-            self.create_participants(participants_data, contract_info_id)
+            participants_data = event['participants']
+            # self.create_participants(participants_data, contract_info_id)
 
             # Extract installments and create installments
-            installments_data = event.get("Installments", [])
+            installments_data = event['installments']
+            print(installments_data)
             self.create_installments(installments_data, contract_info_id)
 
 

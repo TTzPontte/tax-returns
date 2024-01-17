@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import requests
 
-from config import CONFIG
+from . import config
 
 logging.basicConfig(level=logging.INFO)
 
@@ -16,7 +16,7 @@ class GqlClient:
         self._initialize_config()
 
     def _initialize_config(self):
-        self.config = CONFIG.get(self.env, CONFIG['staging'])
+        self.config = config.CONFIG.get(self.env, config.CONFIG['staging'])
         self.api_key = self.config["api_key"]
         self.url = self.config["url"]
         self.headers = {

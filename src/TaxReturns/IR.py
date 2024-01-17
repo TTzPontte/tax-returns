@@ -109,8 +109,6 @@ def parse_json(data: dict) -> IR:
         'email': 'lucas@pontte.com.br',
         'balance': saldo
     }
-    print("________________________________________________________________")
-    print("ir_info",ir_info)
     _obj = {
         "data": ir_info,
         "contract_info": contract_info,

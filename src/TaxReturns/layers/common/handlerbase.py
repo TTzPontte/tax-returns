@@ -112,8 +112,6 @@ class Handler():
 
     def run(self):
         """Executa o handler."""
-        print(self)
-
 
         if AWS_SAM_LOCAL:
             logger.debug("AWS_SAM_LOCAL: %s", AWS_SAM_LOCAL)
