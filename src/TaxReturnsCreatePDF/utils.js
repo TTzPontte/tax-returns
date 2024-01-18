@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 const getContractInfo = async (id) => {
-  const query = `query MyQuery {
-    getContractInfo(id: "9c5548cb-0660-4da0-8c1a-453585b8d779") {
+  const query = `query MyQuery($id: ID!) {
+    getContractInfo(id: $id) {
       total
       email
       development
@@ -33,7 +33,7 @@ const getContractInfo = async (id) => {
       }
       unit
     }
-  }`;
+}`;
 
   const variables = { id };
 
