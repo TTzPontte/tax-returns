@@ -1,10 +1,10 @@
 # ./src/main.py
 
 from dataclasses import field, dataclass
-from daos import AztronicDao
 from IR import parse_json
-# from helpers.PDF import generate_pdf
-# from helpers.utils import csv_to_json
+from helpers.aztronic import get_ir, get_data
+from Models.client import GqlClient
+from Models.dao import TaxReturnsFacade
 
 
 @dataclass
@@ -19,13 +19,11 @@ class Facade:
         self.id_list = [self.az_contract_id]
 
     def process(self):
-        aztronic_dao = AztronicDao()
         for id_ in self.id_list:
             print("---", id_, "---")
             self._current_id = str(id_)
-            ir = aztronic_dao.get_ir(self._current_id)
-            print(ir)
-            info = aztronic_dao.get_data(self._current_id, 'getFinances')
+            ir = get_ir(self._current_id)
+            info = get_data(self._current_id, 'getFinances')
             self._ir_list.append([ir, info])
 
     def make_data(self):
@@ -40,37 +38,23 @@ class Facade:
             })
             current_pdf = ir
             current_pdf_info = current_pdf.to_json()
-            print("current_pdf_info", current_pdf_info)
 
-    # def make_pdfs(self):
-    #         b12 = generate_pdf([current_pdf_info], API_TOKEN)
-    #         data = b12.get('data', {})
-    #         url = data.get('url', "").split("?")[0]
-    #         return_obj = {
-    #             "url": url,
-    #             "id": contrato.get('id_contrato'),
-    #             "total": current_pdf_info['contractInfo'].get('SALDO'),
-    #         }
-    #         index = 0
-    #         for email in current_pdf.emails:
-    #             index += 1
-    #             return_obj[f'participant_{index}'] = email
-    #         self.response_list.append(return_obj)
+            gql_client = GqlClient()
 
+            dao = TaxReturnsFacade(gql_client)
+            dao.create_contract_info_with_participants_and_with_installments(current_pdf_info)
 
 def lambda_handler(event, context):
     az_contract_id = event
-    print(event)
     facade = Facade(az_contract_id)
     facade.process()
+    facade.make_data()
     return {
         'statusCode': 200,
         'body': 'Lambda execution completed successfully.'
     }
 
-if __name__ == '__main__':
-    x = lambda_handler({'body': {
-        'contractId': '129246'
-    }}, {})
-
-    print(x)
+# if __name__ == '__main__':
+#     x = lambda_handler({'body': {
+#         'contractId': '129246'
+#     }}, {})

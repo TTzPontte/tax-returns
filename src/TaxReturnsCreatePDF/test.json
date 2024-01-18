@@ -1,34 +1,54 @@
 {
-   "body":{
-      "data":{
-         "contractInfo":{
-            "EMPREENDIMENTO":"PONTTE - HOME EQUITY",
-            "CONTRATO":"129259",
-            "ANO BASE":"2020",
-            "BLOCO":"ÚNICO",
-            "UNIDADE":"31",
-            "DATA":"25/02/2021"
-         },
-         "installments":[
-            {
-               "creditDate":"30/12/2020",
-               "payedInstallment":"12 - Mensal.",
-               "amoutPayed":"R$ 18.822,13"
-            }
-         ],
-         "participants":[
-            {
-               "name":"PADANIA CONSULTORIA EIRELI",
-               "documentNumber":"06.109.309/0001-09",
-               "participation":"0%"
-            }
-         ],
-         "receiverInfo":{
-            "receiver":"MAUÁ CAPITAL REAL ESTATE DEBT III \n FUNDO DE INVESTIMENTO MULTIMERCADO",
-            "cnpj":"30.982.547/0001-09",
-            "address":"AV BRIGADEIRO FARIA LIMA, 2277 - SÃO PAULO",
-            "date":"SÃO PAULO, 05 DE FEVEREIRO DE 2021"
-         }
+  "data": {
+    "getContractInfo": {
+      "total": null,
+      "email": "lucas@pontte.com.br",
+      "development": "PONTTE - HOME EQUITY",
+      "date": "04/07/2019",
+      "contractNumber": 129238,
+      "block": "H",
+      "baseYear": "2022",
+      "balance": 0,
+      "Installments": {
+        "items": [
+          {
+            "payedInstallment": "Installment 1",
+            "id": "73099d1b-8c7b-4f82-a2f7-2e86d0b42126",
+            "creditDate": "01/01/2023",
+            "createdAt": "2024-01-16T15:22:34.574Z",
+            "contractinfoID": "2c55d833-89fc-49e8-a6b8-5c0aed0bfb0c",
+            "amountPayed": 1000
+          },
+          {
+            "payedInstallment": "Installment 2",
+            "id": "489a5f35-6f99-44e9-808f-21ffe730b4cf",
+            "creditDate": "02/01/2023",
+            "createdAt": "2024-01-16T15:22:35.391Z",
+            "contractinfoID": "2c55d833-89fc-49e8-a6b8-5c0aed0bfb0c",
+            "amountPayed": 800
+          }
+        ]
+      },
+      "Participants": {
+        "items": [
+          {
+            "contractinfoID": "2c55d833-89fc-49e8-a6b8-5c0aed0bfb0c",
+            "documentNumber": "05632835804",
+            "id": "aa432d4c-5300-4ab0-9ef8-946f16146516",
+            "email": "lucas@pontte.com.br",
+            "name": "CLAUDIA LUCAS DOS REIS",
+            "participationPercentage": 50
+          },
+          {
+            "contractinfoID": "2c55d833-89fc-49e8-a6b8-5c0aed0bfb0c",
+            "documentNumber": "00598551859",
+            "id": "7def1f02-52b7-4690-932b-3a37d3761d04",
+            "email": "lucas@pontte.com.br",
+            "name": "LAERCIO LUCAS DOS REIS",
+            "participationPercentage": 50
+          }
+        ]
       }
-   }
+    }
+  }
 }
