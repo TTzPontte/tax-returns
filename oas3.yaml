@@ -1,0 +1,263 @@
+openapi: 3.0.0
+info:
+  title: Financial Data Processing and Tax Return API
+  version: 1.0.0
+  description: An API to manage financial data, generate PDFs for tax returns, and more.
+
+servers:
+  - url: https://api-taxreturns.pontte.com.br/v1
+    description: Production Server
+
+paths:
+  /tax-returns/generate-pdf:
+    post:
+      summary: Generate Tax Return PDF
+      description: Generate a tax return PDF based on submitted tax return data.
+      operationId: generateTaxReturnPDF
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxReturnData'
+      responses:
+        '200':
+          description: Successfully generated PDF.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                        description: URL to the generated PDF.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error. Unexpected server error.
+
+  /tax-returns/{taxReturnId}/generate-pdf:
+    post:
+      summary: Generate Tax Return PDF by ID
+      description: Generate a tax return PDF for a specific tax return ID.
+      operationId: generateTaxReturnPDFByID
+      parameters:
+        - in: path
+          name: taxReturnId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the submitted tax return data.
+      responses:
+        '200':
+          description: Successfully generated PDF.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                        description: URL to the generated PDF.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error. Unexpected server error.
+
+  /tax-returns/create-bulk:
+    post:
+      summary: Create Bulk Records for Financial Data
+      description: Processes and stores financial data in bulk.
+      operationId: createBulkFinancialData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contract_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Successfully processed bulk financial data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: array
+                    items:
+                      type: string
+                  failed:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error. Unexpected server error.
+
+  /tax-returns/create:
+    post:
+      summary: Create Single Financial Data Record
+      description: Processes and stores data for a single financial contract.
+      operationId: createSingleFinancialData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contract_id:
+                  type: string
+      responses:
+        '200':
+          description: Successfully processed a single financial data record.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recordId:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error. Unexpected server error.
+
+  /tax-returns/send-emails:
+    post:
+      summary: Send Emails for Financial Data
+      description: Sends customized emails based on the provided list of Tax Return Record IDs.
+      operationId: sendEmailsForFinancialData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                record_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Successfully sent emails for financial data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: array
+                    items:
+                      type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error. Unexpected server error.
+
+components:
+  schemas:
+    TaxReturnData:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxReturnDetails'
+
+    TaxReturnDetails:
+      type: object
+      properties:
+        contractInfo:
+          $ref: '#/components/schemas/ContractInfo'
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstallmentInfo'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantInfo'
+        receiverInfo:
+          $ref: '#/components/schemas/ReceiverInfo'
+
+    ContractInfo:
+      type: object
+      properties:
+        EMPREENDIMENTO:
+          type: string
+        CONTRATO:
+          type: string
+        ANO BASE:
+          type: string
+        BLOCO:
+          type: string
+        UNIDADE:
+          type: string
+        DATA:
+          type: string
+
+    InstallmentInfo:
+      type: object
+      properties:
+        creditDate:
+          type: string
+          format: date
+        payedInstallment:
+          type: string
+        amoutPayed:
+          type: string
+
+    ParticipantInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        documentNumber:
+          type: string
+        participation:
+          type: string
+
+    ReceiverInfo:
+      type: object
+      properties:
+        receiver:
+          type: string
+        cnpj:
+          type: string
+        address:
+          type: string
+        date:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request. Invalid input data format.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Detailed error message.
