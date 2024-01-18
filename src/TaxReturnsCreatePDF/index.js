@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 const { generateTaxReturnPdf } = require("./PDF");
+const { getContractInfo } = require("./utils")
 
 const s3 = new AWS.S3();
 

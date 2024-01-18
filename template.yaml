@@ -119,7 +119,6 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Sub "TaxReturns-${Environment}" 
-
       Events:
         CreateTaxReturn:
           Type: Api
