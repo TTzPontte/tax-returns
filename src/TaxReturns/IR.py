@@ -38,7 +38,7 @@ class Pagamento:
         return {
             'creditDate': f'{self.mes}/2022',
             'payedInstallment': f"{self.mes} - Mensal",
-            'amoutPayed': parse_to_brl(self.valor_pago)
+            'amountPayed': self.valor_pago,
         }
 
 
@@ -70,7 +70,7 @@ class IR:
 
 
     def to_json(self):
-        it = [installment.to_json() for installment in self.data.pagamentos][0]['amoutPayed']
+        it = [installment.to_json() for installment in self.data.pagamentos][0]['amountPayed']
         self.data.saldo = it
         self.saldo = it
         self.contract_info['saldo'] = it

@@ -3,10 +3,9 @@ import logging
 from http import HTTPStatus
 
 from app import lambda_handler
-from layers.common.config import LOGGING_LEVEL
-from layers.common.errors import Errors, AppException
-
-from layers.common.handlerbase import Result, Handler
+from configFiles.config import LOGGING_LEVEL
+from configFiles.errors import Errors, AppException
+from configFiles.handlerbase import Result, Handler
 
 logger = logging.getLogger(__name__)
 logger.setLevel(LOGGING_LEVEL)
@@ -26,8 +25,7 @@ class TaxReturns(Handler):
 
     def handler(self):
         data = json.loads(self.event["body"])
-        data_parsed = json.loads(data)
-        contract_id = data_parsed.get("contractId")
+        contract_id = data.get("contractId")
         if contract_id:
             execution = lambda_handler(contract_id, {})
 

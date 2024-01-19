@@ -18,7 +18,7 @@ Parameters:
       - prod
 
 Conditions:
-  IsProd: !Equals [!Ref Environment, prod]
+  IsProd: !Equals [ !Ref Environment, prod ]
 
 Resources:
   GeneralExecutionRole:
@@ -54,7 +54,7 @@ Resources:
                   - dynamodb:UpdateItem
                   - dynamodb:Query
                   - dynamodb:Scan
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
   LambdaS3DynamoDBAccessPolicy:
@@ -68,10 +68,10 @@ Resources:
               - s3:ListBucket
               - s3:GetObject
               - s3:PutObject
-            Resource: 
-                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-staging/*"
-                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev/*"
-                  - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev-*"
+            Resource:
+                - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795134329-staging/*"
+                - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev/*"
+                - !Sub "arn:aws:s3:::taxreturns-frontend-storage-73711795155840-dev-*"
           - Effect: Allow
             Action:
               - dynamodb:PutItem
@@ -79,13 +79,13 @@ Resources:
               - dynamodb:UpdateItem
               - dynamodb:Query
               - dynamodb:Scan
-            Resource: 
+            Resource:
               - !Sub "arn:aws:dynamodb:us-east-1:848638426587:table/TaxReturns-${Stage}"
 
   APIDomainName:
     Type: "AWS::ApiGateway::DomainName"
     Properties:
-      DomainName: !If [IsProd, "api-taxreturns.pontte.com.br", !Sub "api-taxreturns-${Environment}.pontte.com.br"]
+      DomainName: !If [ IsProd, "api-taxreturns.pontte.com.br", !Sub "api-taxreturns-${Environment}.pontte.com.br" ]
       CertificateArn: "arn:aws:acm:us-east-1:848638426587:certificate/639f5ab2-c77a-4f62-8250-c85716a6753f"
 
   CloudWatchRole:
@@ -108,7 +108,7 @@ Resources:
       CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
 
   TaxReturnGeneratePDF:
-    Type: AWS::Serverless::Function 
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/TaxReturnsCreatePDF
       FunctionName: !Sub "TaxReturnGeneratePDF-${Stage}"
@@ -118,8 +118,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          TABLE_NAME: !Sub "TaxReturns-${Environment}" 
-
+          TABLE_NAME: !Sub "TaxReturns-${Environment}"
       Events:
         CreateTaxReturn:
           Type: Api
@@ -143,15 +142,39 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  TaxReturns:
-    Type: AWS::Serverless::Function 
+  TaxReturnsLibrariesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: bibliotecas comuns para as funcoes.
+      ContentUri: ./layers/libraries/
+      CompatibleRuntimes:
+        - python3.9
+    Metadata:
+      BuildMethod: python3.9
+
+  TaxReturnsCommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Arquivos comuns para as funcoes.
+      ContentUri: ./layers/common/
+      CompatibleRuntimes:
+        - python3.9
+    Metadata:
+      BuildMethod: python3.9
+
+  TaxReturnsGerateData:
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/TaxReturns
+      FunctionName: !Sub "TaxReturns-${Stage}"
       Handler: appHandler.handler
       Runtime: python3.9
       Timeout: 30
+      Layers:
+        - !Ref TaxReturnsLibrariesLayer
+        - !Ref TaxReturnsCommonLayer
       Architectures:
-      - x86_64
+        - x86_64
       Events:
         HelloWorld:
           Type: Api
@@ -159,3 +182,27 @@ Resources:
             Path: /tax-returns
             Method: post
       Role: !GetAtt ExecutionRole.Arn
+
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
