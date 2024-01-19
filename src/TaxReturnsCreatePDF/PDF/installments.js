@@ -81,11 +81,11 @@ const installmentsTable = ({ installments, total = "10000000,00000" }) => ({
 
 const installmentsPage = ({
   proposal: { installment: installments },
-  contractInfo: { balance = "0,00", total = "0,00" },
+  contractInfo: { balance = "0,00", total = "0,00", name },
 }) => ({
   stack: [
     createHeadline(
-      `DEMONSTRATIVO DE VALORES PAGOS\n SALDO DEVEDOR EM 31/12/2023 ${balance}`
+      `TITULAR: ${name}\n SALDO DEVEDOR EM 31/12/2023: ${balance}`
     ),
     installmentsTable({
       installments,

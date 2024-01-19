@@ -26,7 +26,6 @@ const receiverSection = ({
       ['FONTE RECEBEDORA', receiver],
       ['CNPJ', cnpj],
       ['ENDEREÇO', address],
-      ['DATA', date]
     ]
   },
   layout,
@@ -38,7 +37,7 @@ const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumb
     headerRows: 0,
     widths: ['40%', '60%'],
     body: [
-      ['NOME', name],
+      ['NOME/RAZÃO SOCIAL', name],
       ['CPF/CNPJ', documentNumber],
       ['PARTICIPAÇÃO', formatValue(formatPercentage(participationPercentage))]
     ]

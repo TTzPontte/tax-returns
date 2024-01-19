@@ -1,5 +1,5 @@
 const {
-  ColorScheme: { $MAIN_DARK }
+  ColorScheme: { $MAIN_DARK, $MAIN_PURPLE }
 } = require('./constants');
 const text = ({ text, props }) => {
   return text ? { text, ...props } : {};
@@ -9,7 +9,7 @@ const createHeadline = (title, subtitle = '') => ({
   stack: [
     {
       columns: [
-        text({ text: title, props: { fontSize: 9, bold: true } }),
+        text({ text: title, props: { fontSize: 12, bold: true, color: $MAIN_PURPLE} }),
         text({
           text: subtitle,
           props: { fontSize: 9, bold: true, alignment: 'right' }

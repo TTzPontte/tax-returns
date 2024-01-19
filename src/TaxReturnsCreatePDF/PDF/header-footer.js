@@ -3,7 +3,7 @@ const { logoPontteSVG } = require('./assets/svg');
 
 const header = (page, part, stacks) => {
   let header = '';
-
+  let yearBase = 'ANO BASE 2023'
   stacks.forEach((stack, index) => {
     const pageNumbers = stack.positions.map(position => [position.pageNumber, index]);
     const currentPage = pageNumbers.find(number => number[0] === page);
@@ -20,7 +20,7 @@ const header = (page, part, stacks) => {
         {
           stack: [
             { text: header, bold: true, fontSize: 8 },
-            { text: `ANO BASE 2022`, fontSize: 8 }
+            { text: yearBase, fontSize: 8 }
           ],
           alignment: 'right',
           margin: [0, 5, 0, 0]
