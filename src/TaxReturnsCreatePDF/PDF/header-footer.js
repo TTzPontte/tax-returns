@@ -1,13 +1,27 @@
 const { getNowShortDateString } = require('./helpers/date');
 const { logoPontteSVG } = require('./assets/svg');
+const {
+  ColorScheme: { $MAIN_PURPLE }
+} = require('./constants');
 
+let previousIndex = -1
 const header = (page, part, stacks) => {
   let header = '';
-
+  let yearBase = 'ANO BASE 2023'
   stacks.forEach((stack, index) => {
     const pageNumbers = stack.positions.map(position => [position.pageNumber, index]);
     const currentPage = pageNumbers.find(number => number[0] === page);
-    if (currentPage) header = part[currentPage[1]].name;
+
+    if(currentPage){
+      if(currentPage[1] > previousIndex){
+        previousIndex = currentPage[1]
+        header = part[currentPage[1]].name;
+      }else{
+       header = ''
+       yearBase = ''
+      }
+    }
+    
   });
 
   return [
@@ -19,8 +33,8 @@ const header = (page, part, stacks) => {
         },
         {
           stack: [
-            { text: header, bold: true, fontSize: 8 },
-            { text: `ANO BASE 2022`, fontSize: 8 }
+            { text: header, bold: true, fontSize: 14, color: $MAIN_PURPLE},
+            { text: yearBase, fontSize: 10 }
           ],
           alignment: 'right',
           margin: [0, 5, 0, 0]

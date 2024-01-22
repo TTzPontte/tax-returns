@@ -41,14 +41,13 @@ const IntroductionPage = ({ contractInfo }) => {
     block: 'Bloco',
     unit: 'Unidade',
     date: 'Data',
-    development: 'Desenvolvimento',
+    development: 'Empreendimento',
     contractNumber: 'Número do Contrato',
     baseYear: 'Ano Base'
   };
     
-  const row2 = buildHeaderList(['block', 'unit', 'date'], titleMap);
-  const row1 = buildHeaderList(['development', 'contractNumber', 'baseYear'], titleMap);
-  const buildHeader = () => [buildHeaderRow(row1), buildHeaderRow(row2)];
+  const row1 = buildHeaderList(['development', 'contractNumber', 'baseYear', ['date']], titleMap);
+  const buildHeader = () => [buildHeaderRow(row1)];
 
   return {
     columns: [

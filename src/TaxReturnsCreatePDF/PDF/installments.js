@@ -21,6 +21,8 @@ const creatHeader = (
     alignment: "center",
     color: $WHITE,
     lineHeight: 0.5,
+    fontSize: 10,
+    bold: true
   },
   marginSingleLine = [0, 10, 0, 0]
 ) => [
@@ -37,13 +39,18 @@ const createRow = ({ installments = [] }) => {
   const options = {
     alignment: "center",
     color: $MAIN_DARK,
+    fontSize: 10
   };
 
   const data = installments.map((installmentItem) => {
     if (installmentItem) {
       const { creditDate, payedInstallment, amountPayed } = installmentItem;
+
+      const [month, year] = creditDate.split('/');
+      const formattedCreditDate = `${month.padStart(2, '0')}/${year}`;
+
       return [
-        { text: creditDate, ...options },
+        { text: formattedCreditDate, ...options },
         { text: payedInstallment, ...options },
         { text: amountPayed, ...options },
       ];
@@ -54,13 +61,15 @@ const createRow = ({ installments = [] }) => {
 };
 
 const totalFooter = ({ total }) => [
-  { fillColor: $WHITE, text: "" },
+  { fillColor: $GRAY_1, text: "" },
   {
     fillColor: $GRAY_1,
     text: "Total",
     alignment: "center",
+    bold: true,
+    fontSize: 10
   },
-  { fillColor: $GRAY_1, text: formatMoney(total), alignment: "center" },
+  { fillColor: $GRAY_1, text: formatMoney(total), alignment: "center", bold: true, fontSize: 10},
 ];
 const installmentsTable = ({ installments, total = "10000000,00000" }) => ({
   style: "proposalTable",
@@ -80,12 +89,12 @@ const installmentsTable = ({ installments, total = "10000000,00000" }) => ({
 });
 
 const installmentsPage = ({
-  proposal: { installment: installments },
-  contractInfo: { balance = "0,00", total = "0,00" },
+  proposal: { installment: installments, participants },
+  contractInfo: { balance = "0,00", total = "0,00", name = 'teste' },
 }) => ({
   stack: [
     createHeadline(
-      `DEMONSTRATIVO DE VALORES PAGOS\n SALDO DEVEDOR EM 31/12/2023 ${balance}`
+      `TITULAR: ${participants[0].name}`, `SALDO DEVEDOR EM 31/12/2023: ${balance}` 
     ),
     installmentsTable({
       installments,
