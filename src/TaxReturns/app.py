@@ -6,7 +6,6 @@ from helpers.aztronic import get_ir, get_data
 from Models.client import GqlClient
 from Models.dao import TaxReturnsFacade
 
-
 @dataclass
 class Facade:
     az_contract_id: str
