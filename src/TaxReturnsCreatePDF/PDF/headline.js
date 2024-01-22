@@ -9,12 +9,14 @@ const createHeadline = (title, subtitle = '') => ({
   stack: [
     {
       columns: [
-        text({ text: title, props: { fontSize: 12, bold: true, color: $MAIN_PURPLE} }),
-        text({
-          text: subtitle,
-          props: { fontSize: 9, bold: true, alignment: 'right' }
-        })
+        text({ text: `${title}\n\n`, props: { fontSize: 12, bold: true, color: $MAIN_PURPLE} }),
       ]
+    },
+    {
+      text: subtitle,
+      margin: [0, 2, 0, 0], 
+      fontSize: 12,
+      bold: true
     },
     {
       canvas: [
@@ -34,4 +36,4 @@ const createHeadline = (title, subtitle = '') => ({
   margin: [0, 20, 0, 20]
 });
 
-module.exports = { createHeadline };
+module.exports = { createHeadline, text };

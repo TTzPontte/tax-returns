@@ -1,11 +1,11 @@
 const { formatPercentage } = require('./helpers/number');
 const {
   fillColor,
-  ColorScheme: { $MAIN_PURPLE }
+  ColorScheme: { $MAIN_PURPLE, $WHITE }
 } = require('./constants');
 
 const formatValue = value => ({ text: value, bold: true, fontSize: 10, color: $MAIN_PURPLE });
-
+ 
 const layout = {
   defaultBorder: false,
   fillColor: rowIndex => fillColor(rowIndex),
@@ -23,6 +23,7 @@ const receiverSection = ({
     headerRows: 0,
     widths: ['40%', '60%'],
     body: [
+      [formatValue('Beneficiário'), ''],
       ['FONTE RECEBEDORA', receiver],
       ['CNPJ', cnpj],
       ['ENDEREÇO', address],
@@ -37,13 +38,14 @@ const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumb
     headerRows: 0,
     widths: ['40%', '60%'],
     body: [
+      [formatValue('Pagador'), ''],
       ['NOME/RAZÃO SOCIAL', name],
       ['CPF/CNPJ', documentNumber],
       ['PARTICIPAÇÃO', formatValue(formatPercentage(participationPercentage))]
     ]
   },
   layout,
-  margin: [0, 40, 0, 0]
+  margin: [0, 20, 0, 0]
 });
 
 const proposal = ({ proposal: { participants, receiverInfo } }) => {

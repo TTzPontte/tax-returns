@@ -24,7 +24,6 @@ const buildContent = ({ proposal, contractInfo }) => [
 
 const getDocDefinition = ({ contractInfo, proposal }) => {
   const contentParticipants = proposal.participants.map(() => buildContent({ contractInfo, proposal }));
-
   return {
     content: contentParticipants,
     footer,
