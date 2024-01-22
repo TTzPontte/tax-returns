@@ -119,6 +119,8 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Sub "TaxReturns-${Environment}"
+      Layers:
+        - arn:aws:lambda:us-east-1:848638426587:layer:nodelayer16:2
       Events:
         CreateTaxReturn:
           Type: Api
