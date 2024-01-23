@@ -36,10 +36,10 @@ exports.handler = async (event, context) => {
     };
 
     const receiverInfo = {
-      receiver: "MAUÁ CAPITAL REAL ESTATE DEBT III | Investment Multimarket Fund",
+      receiver: "MAUÁ CAPITAL REAL ESTATE DEBT III FUNDO DE INVESTIMENTO MULTIMERCADO",
       cnpj: "30.982.547/0001-09",
-      address: "AV BRIGADEIRO FARIA LIMA, 2277 - SÃO PAULO",
-      date: "SÃO PAULO, 05 DE FEVEREIRO DE 2021",
+      address: "AV. BRG. FARIA LIMA, 1485 - 18o ANDAR - PINHEIROS, SÃO PAULO - SP, 01452-002",
+      date: "SÃO PAULO, 05 DE FEVEREIRO DE 2023",
     };
 
     const environments = ["dev", "staging", "prod"];

@@ -164,7 +164,7 @@ Resources:
     Metadata:
       BuildMethod: python3.9
 
-  TaxReturnsGerateData:
+  TaxReturnsGenerateData:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/TaxReturns
