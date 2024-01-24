@@ -36,13 +36,24 @@ const creatHeader = (
 ];
 
 const createRow = ({ installments = [] }) => {
+  const sortedInstallments = installments.sort((a, b) => {
+    const [monthA, yearA] = a.creditDate.split('/').map(Number);
+    const [monthB, yearB] = b.creditDate.split('/').map(Number);
+
+    if (yearA !== yearB) {
+      return yearA - yearB;
+    }
+
+    return monthA - monthB;
+  });
+
   const options = {
     alignment: "center",
     color: $MAIN_DARK,
     fontSize: 10
   };
 
-  const data = installments.map((installmentItem) => {
+  const data = sortedInstallments.map((installmentItem) => {
     if (installmentItem) {
       const { creditDate, payedInstallment, amountPayed } = installmentItem;
 
@@ -51,8 +62,8 @@ const createRow = ({ installments = [] }) => {
 
       return [
         { text: formattedCreditDate, ...options },
-        { text: payedInstallment, ...options },
-        { text: amountPayed, ...options },
+        { text: 'Entrada / Mensal / Intermediária / Final', ...options },
+        { text: formatMoney(amountPayed), ...options },
       ];
     }
   });
@@ -85,7 +96,6 @@ const installmentsTable = ({ installments, total = "10000000,00000" }) => ({
   },
   layout,
   margin: [0, 0, 0, 10],
-  pageBreak: "after",
 });
 
 const installmentsPage = ({

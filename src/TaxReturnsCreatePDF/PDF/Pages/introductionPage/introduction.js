@@ -4,12 +4,11 @@ const {
 
 const buildHeaderRow = (list, margin = [0, 60, 0, 0]) => ({
   columns: list.map(({ title, value }) => ({
-    width: 140,
+    width: title === 'Ano Base' ? 60 : 100,
     stack: [
       {
         columns: [
           {
-            width: '*',
             stack: [
               { text: title, fontSize: 8 },
               {
@@ -32,7 +31,8 @@ const buildHeaderRow = (list, margin = [0, 60, 0, 0]) => ({
 const HeaderTitle = () => ({
   text: `Demonstrativo de Valores Pagos`,
   fontSize: 24,
-  bold: true
+  bold: true,
+  color: $MAIN_PURPLE
 });
 
 const IntroductionPage = ({ contractInfo }) => {
@@ -46,7 +46,7 @@ const IntroductionPage = ({ contractInfo }) => {
     baseYear: 'Ano Base'
   };
     
-  const row1 = buildHeaderList(['development', 'contractNumber', 'baseYear', ['date']], titleMap);
+  const row1 = buildHeaderList(['development', 'contractNumber', 'baseYear', 'date'], titleMap);
   const buildHeader = () => [buildHeaderRow(row1)];
 
   return {
@@ -59,7 +59,7 @@ const IntroductionPage = ({ contractInfo }) => {
             x: 0,
             y: 0,
             w: 4,
-            h: 260,
+            h: 130,
             r: 5,
             color: $MAIN_PURPLE,
             lineColor: $MAIN_PURPLE

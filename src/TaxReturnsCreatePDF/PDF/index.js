@@ -40,8 +40,7 @@ const getDocDefinition = ({ contractInfo, proposal }) => {
     defaultStyle: {
       font: 'Muli',
       color: $MAIN_DARK
-    },
-    pageBreak: 'after'
+    }
   };
 };
 
@@ -53,13 +52,12 @@ const generatePDF = async ({ contractInfo, proposal }) => {
     contractInfo,
     proposal
   });
-
+  
   const pdfBuffer = await new Promise(resolve => {
     let printer = new PdfPrinter(fonts);
     var doc = printer.createPdfKitDocument(docDefinition, {});
-
     doc.end();
-
+    
     const buffers = [];
     doc.on('data', buffers.push.bind(buffers));
     doc.on('end', () => {
