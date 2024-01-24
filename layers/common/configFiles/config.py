@@ -10,4 +10,3 @@ API_ENDPOINT = os.getenv("API_ENDPOINT")
 DYNAMODB_ENDPOINT = os.getenv("DYNAMODB_ENDPOINT")
 
 ENV = os.getenv("ENV") or "prod"
-
