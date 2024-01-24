@@ -208,3 +208,25 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
+
+
+  TaxReturnsPDFbyID:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/TaxReturnsPDFByID
+      FunctionName: !Sub "TaxReturnsPDFbyID-${Stage}"
+      Handler: appHandler.handler
+      Runtime: python3.9
+      Timeout: 30
+      Layers:
+        - !Ref TaxReturnsLibrariesLayer
+        - !Ref TaxReturnsCommonLayer
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /tax-returns/{taxReturnId}/generate-pdf
+            Method: post
+      Role: !GetAtt ExecutionRole.Arn

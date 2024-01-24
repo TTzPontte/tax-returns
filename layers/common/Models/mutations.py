@@ -4,6 +4,42 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Define GraphQL Mutations for Contract, Participant, and Installment (unchanged)
+
+gql_query_get_contractInfo = """
+  query getContractInfo($id: ID!) {
+  getContractInfo(id: $id) {
+    total
+    email
+    development
+    date
+    contractNumber
+    block
+    baseYear
+    balance
+    Installments {
+      items {
+        payedInstallment
+        id
+        creditDate
+        createdAt
+        contractinfoID
+        amountPayed
+      }
+    }
+    unit
+    Participants {
+      items {
+        name
+        participationPercentage
+        email
+        documentNumber
+      }
+    }
+  }
+}
+"""
+
+
 gql_mutation_create_contract = """
     mutation CreateContract(
         $balance: Float!,
