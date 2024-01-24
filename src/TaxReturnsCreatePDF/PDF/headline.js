@@ -16,7 +16,8 @@ const createHeadline = (title, subtitle = '') => ({
       text: subtitle,
       margin: [0, 2, 0, 0], 
       fontSize: 12,
-      bold: true
+      bold: true,
+      color: $MAIN_PURPLE
     },
     {
       canvas: [

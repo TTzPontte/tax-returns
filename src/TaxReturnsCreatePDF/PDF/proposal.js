@@ -15,7 +15,7 @@ const layout = {
 const receiverSection = ({
   receiver = 'MAUÁ CAPITAL REAL ESTATE DEBT III \n FUNDO DE INVESTIMENTO MULTIMERCADO',
   cnpj = '30.982.547/0001-09',
-  address = 'Av. Brg. Faria Lima, 1485 - 18º andar - Pinheiros, São Paulo - SP',
+  address = 'AV. BRG. FARIA LIMA, 1485 - 18o ANDAR - PINHEIROS, SÃO PAULO - SP, 01452-002',
   date = 'SÃO PAULO, 05 DE FEVEREIRO DE 2023'
 }) => ({
   style: 'proposalTable',
@@ -23,7 +23,7 @@ const receiverSection = ({
     headerRows: 0,
     widths: ['40%', '60%'],
     body: [
-      [formatValue('Beneficiário'), ''],
+      [formatValue('BENEFICIÁRIO'), ''],
       ['FONTE RECEBEDORA', receiver],
       ['CNPJ', cnpj],
       ['ENDEREÇO', address],
@@ -38,7 +38,7 @@ const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumb
     headerRows: 0,
     widths: ['40%', '60%'],
     body: [
-      [formatValue('Pagador'), ''],
+      [formatValue('PAGADOR'), ''],
       ['NOME/RAZÃO SOCIAL', name],
       ['CPF/CNPJ', documentNumber],
       ['PARTICIPAÇÃO', formatValue(formatPercentage(participationPercentage))]

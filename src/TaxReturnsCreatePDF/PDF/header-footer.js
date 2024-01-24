@@ -34,7 +34,7 @@ const header = (page, part, stacks) => {
         {
           stack: [
             { text: header, bold: true, fontSize: 14, color: $MAIN_PURPLE},
-            { text: yearBase, fontSize: 10 }
+            { text: yearBase, fontSize: 10, color: $MAIN_PURPLE }
           ],
           alignment: 'right',
           margin: [0, 5, 0, 0]
