@@ -3,7 +3,8 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from dateutil.parser import parse as parse_date
-from helpers.utils import parse_to_brl, format_br_doc, get_client_email
+
+from helpers.utils import format_br_doc, get_client_email
 
 
 @dataclass
@@ -68,7 +69,6 @@ class IR:
             participants.append(participant.to_json())
         return participants
 
-
     def to_json(self):
         it = [installment.to_json() for installment in self.data.pagamentos][0]['amountPayed']
         self.data.saldo = it
@@ -82,33 +82,48 @@ class IR:
         }
 
 
-def parse_json(data: dict) -> IR:
-    informeiro_data = data['informeir']['informeir']
-    contrato = data['contrato']
+def parse_participante(participante_data: dict) -> Participante:
+    return Participante(**participante_data)
 
-    participantes = [Participante(**participante) for participante in informeiro_data['participantes']]
-    pagamentos = [Pagamento(**pagamento) for pagamento in informeiro_data['pagamentos']]
-    saldo = pagamentos[0].valor_pago
 
-    ir_info = Informeiro(
-        empresa=informeiro_data['empresa'],
-        cnpj_cpf=informeiro_data['cnpj_empresa'],
-        dt_contrato=informeiro_data['dt_contrato'],
+def parse_pagamento(pagamento_data: dict) -> Pagamento:
+    return Pagamento(**pagamento_data)
+
+
+def parse_informeiro(informeiro_data: dict) -> Informeiro:
+    participantes = [parse_participante(part) for part in informeiro_data.get('participantes', [])]
+    pagamentos = [parse_pagamento(pay) for pay in informeiro_data.get('pagamentos', [])]
+    saldo = pagamentos[0].valor_pago if pagamentos else 0
+
+    return Informeiro(
+        empresa=informeiro_data.get('empresa'),
+        cnpj_cpf=informeiro_data.get('cnpj_empresa'),
+        dt_contrato=informeiro_data.get('dt_contrato'),
         saldo=saldo,
         participantes=participantes,
         pagamentos=pagamentos
     )
 
-    contract_info = {
-        'development': contrato['empreendimento'],
-        'contractNumber': contrato['id_contrato'],
+
+def parse_contract_info(contrato: dict, saldo: float) -> dict:
+    return {
+        'development': contrato.get('empreendimento'),
+        'contractNumber': contrato.get('id_contrato'),
         'baseYear': '2022',
-        'block': contrato['bloco'],
-        'unit': contrato['unidade'],
-        'date': parse_date(contrato['data_contrato']).strftime("%d/%m/%Y"),
+        'block': contrato.get('bloco'),
+        'unit': contrato.get('unidade'),
+        'date': parse_date(contrato.get('data_contrato')).strftime("%d/%m/%Y"),
         'email': 'lucas@pontte.com.br',
         'balance': saldo
     }
+
+
+def parse_json(informeir_data: dict, contrato: dict) -> IR:
+    informeiro_data = informeir_data.get('informeir', {})
+
+    ir_info = parse_informeiro(informeiro_data)
+    contract_info = parse_contract_info(contrato, ir_info.saldo)
+
     _obj = {
         "data": ir_info,
         "contract_info": contract_info,
@@ -116,8 +131,8 @@ def parse_json(data: dict) -> IR:
             "receiver": "MAUÁ CAPITAL REAL ESTATE DEBT III \n FUNDO DE INVESTIMENTO MULTIMERCADO",
             "cnpj": "30.982.547/0001-09",
             "address": "Av. Brg. Faria Lima, 1485 - 18º andar - Pinheiros, São Paulo - SP, 01452-002",
-            # todo check date
             "date": "SÃO PAULO, 05 DE FEVEREIRO DE 2023"
         }
     }
+
     return IR(**_obj)
