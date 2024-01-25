@@ -174,6 +174,64 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           description: Internal Server Error. Unexpected server error.
+  /tax-returns/{taxReturnId}/send-email:
+    post:
+      summary: Send Email for Specific Tax Return
+      description: Sends a customized email for a tax return identified by the given tax return ID.
+      operationId: sendEmailForTaxReturn
+      parameters:
+        - in: path
+          name: taxReturnId
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the tax return data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emailDetails:
+                  type: object
+                  properties:
+                    recipientEmail:
+                      type: string
+                      format: email
+                    subject:
+                      type: string
+                    message:
+                      type: string
+                    includePDF:
+                      type: boolean
+                      description: Indicates whether to attach the tax return PDF in the email.
+      responses:
+        '200':
+          description: Successfully sent email for the specific tax return.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  messageId:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Tax Return ID not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Detailed error message.
+        '500':
+          description: Internal Server Error. Unexpected server error.
 
 components:
   schemas:
