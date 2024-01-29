@@ -6,7 +6,7 @@ from .mutations import (
     gql_mutation_create_contract,
     gql_mutation_create_installment,
     gql_mutation_create_participant,
-    gql_query_get_contractInfo
+    gql_query_get_contractInfo, gql_query_get_participants_by_document_number
 )
 
 # Configure logging at the beginning of the script
@@ -45,10 +45,21 @@ class AppSyncDao:
 
         try:
             result = self.gql_client.post(gql_query_get_contractInfo, variables)
-            return result  # Corrected: "query: " to "data"
+            return result
         except Exception as e:
             logging.error(f"Failed to get record by contract ID: {str(e)}")
             return {}
+
+    def get_records_by_document_number(self, document_number: str) -> dict:
+        variables = {"documentNumber": document_number}
+        print(variables)
+        try:
+            result = self.gql_client.post(gql_query_get_participants_by_document_number, variables)
+            return result
+        except Exception as e:
+            logging.error(f"Failed to get record by contract ID: {str(e)}")
+            return {}
+
 
 
 @dataclass
