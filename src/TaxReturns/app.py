@@ -31,10 +31,7 @@ class Facade:
             info = ir_info[1]
             print("---", info, "---")
             contrato = info['data']['posicaofinanceira']['contrato']
-            ir = parse_json({
-                "informeir": ir,
-                "contrato": contrato
-            })
+            ir = parse_json(ir,contrato)
             current_pdf = ir
             current_pdf_info = current_pdf.to_json()
 
@@ -54,6 +51,6 @@ def lambda_handler(event, context):
     }
 
 # if __name__ == '__main__':
-#     x = lambda_handler({'body': {
+#     x = lambda_handler({
 #         'contractId': '129246'
-#     }}, {})
+#     }, {})
