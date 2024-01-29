@@ -40,7 +40,8 @@ const getDocDefinition = ({ contractInfo, proposal }) => {
     defaultStyle: {
       font: 'Muli',
       color: $MAIN_DARK
-    }
+    },
+    pageBreak: 'after'
   };
 };
 
