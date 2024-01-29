@@ -1,8 +1,12 @@
 # %%
 import json
-from configFiles.config import AZT_API_TOKEN
+import boto3
 
-print(AZT_API_TOKEN)
+ssm = boto3.client('ssm')
+parameter = ssm.get_parameter(Name='/aztronic/apikey', WithDecryption=True)
+print(parameter['Parameter']['Value'])
+
+azt_api_key = parameter['Parameter']['Value']
 
 import requests as re
 def get_data(id, operation):
@@ -15,7 +19,7 @@ def get_data(id, operation):
 
 def get_ir(uuid):
     header = {
-        'Authorization': f'Basic {AZT_API_TOKEN}',
+        'Authorization': f'Basic {azt_api_key}',
         'Content-Type': 'application/json'
     }
     endpoint = f'https://srv1.aztronic.com.br/az/apicollect/api/cliente/GetInformeIR/{uuid}/2022'
@@ -24,7 +28,7 @@ def get_ir(uuid):
 
 def get_client(cpf_cnpj):
     header = {
-        'Authorization': f'Basic {AZT_API_TOKEN}',
+        'Authorization': f'Basic {azt_api_key}',
         'Content-Type': 'application/json'
     }
     endpoint = f'https://srv1.aztronic.com.br/az/apicollect/api/cliente/GetCliente/{cpf_cnpj}'
