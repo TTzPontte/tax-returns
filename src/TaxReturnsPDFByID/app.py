@@ -1,13 +1,13 @@
 import json
 import boto3
 
-from layers.common.Models.client import GqlClient
-from layers.common.Models.dao import AppSyncDao
+from Models.client import GqlClient
+from Models.dao import TaxReturnsFacade
 
 
 def invoke_lambda_function(event):
     try:
-        tax_return_id = event['pathParameters']['taxReturnId']
+        tax_return_id = event
         lambda_client = boto3.client('lambda')
         gql_client = GqlClient()
         dao = AppSyncDao(gql_client)
@@ -29,13 +29,3 @@ def invoke_lambda_function(event):
     except Exception as e:
         return str(e)
 
-if __name__ == '__main__':
-    sample_event = {
-        'pathParameters': {
-            'taxReturnId': '07ad7127-761a-4460-b515-40a15b09a61a'  # Substitua pelo ID desejado
-        }
-    }
-
-    # Invoca a função lambda
-    result = invoke_lambda_function(sample_event)
-    print(result)
