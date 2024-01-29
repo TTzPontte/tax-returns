@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
       },
     });
 
-    const s3FileName = `${contractInfo.development}.pdf`;
+    const s3FileName = `${contractInfo.contractNumber}.pdf`;
 
     const s3Bucket =
       environment === "dev"
