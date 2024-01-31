@@ -1,10 +1,11 @@
+import json
 from dataclasses import dataclass
 from typing import List
 
-from layers.common.Models.client import GqlClient
-from layers.common.Models.dao import AppSyncDao
-from src.TaxReturnsSendEmail.Builder.EmailConfig import EmailConfig
-from src.TaxReturnsSendEmail.Builder.html_builder import HtmlBuilder
+from Builder.EmailConfig import EmailConfig
+from Builder.html_builder import HtmlBuilder
+from single_page import html_content_single_page
+from multiple_page import html_content_multiple_page
 
 
 @dataclass
@@ -12,13 +13,15 @@ class EmailToSend:
     sku: str
     email: str
     contractinfoID: List[str]
+    links: List[str]
 
 
 def create_email_from_record(record):
     return EmailToSend(
         sku=record.get('documentNumber'),
         email=record.get('email'),
-        contractinfoID=record.get('contractinfoID')
+        contractinfoID=record.get('contractinfoID'),
+        links=record.get('url')
     )
 
 
@@ -28,55 +31,57 @@ class Facade:
 
     def __post_init__(self):
         self.email_list = []
+    def send_single(self, input_file_path: str, output_file: str, links, email):
+        email_list = [email]
+        for email_to_send in email_list:
+            config = EmailConfig(to_email=email_to_send)
+            email_service = HtmlBuilder(config=config, html_file_path=input_file_path, output_file=output_file)
+            soup = email_service.parse_html(html_string=input_file_path)
+            modified_html = email_service.modify_html_single(soup, links=links)
+            email_service.save_modified_html_to_file(modified_html)
+            emails = [email_to_send]
+            email_service.send_emails(modified_html, emails)
 
-    def process_records(self, cpf_or_cnpj):
-        print(cpf_or_cnpj)
-        gql_client = GqlClient()
-        dao = AppSyncDao(gql_client)
+    def send_multiple(self, input_file_path: str, output_file: str, links, email):
+        email_list = [email]
+        for email_to_send in email_list:
+            config = EmailConfig(to_email=email_to_send)
+            email_service = HtmlBuilder(config=config, html_file_path=input_file_path, output_file=output_file)
+            soup = email_service.parse_html(html_string=input_file_path)
+            modified_html = email_service.modify_html_multiple(soup, links=links)
+            email_service.save_modified_html_to_file(modified_html)
+            emails = [email_to_send]
+            email_service.send_emails(modified_html, emails)
 
-        result = dao.get_records_by_document_number(document_number=cpf_or_cnpj)
-        items = result.get('listParticipants', {}).get('items', [])
-
-        self.email_list = [create_email_from_record(record) for record in items]
-        print(self.email_list)
-
-def send_single(self, output_file: str):
-    for email_to_send in self.email_list:
-        config = EmailConfig(to_email=email_to_send.email)
-        email_service = HtmlBuilder(config=config, html_file_path=None, output_file=output_file)
-        soup = email_service.parse_html()
-        modified_html = email_service.modify_html_single(soup, link=email_to_send.links[0])
-        email_service.save_modified_html_to_file(modified_html)
-        emails = [email_to_send.email]
-        email_service.send_emails(modified_html, emails)
-
-
-#    def send_multiple(self, output_file: str):
-#        for email_to_send in self.email_list:
-#            config = EmailConfig(to_email=email_to_send.email)
-#            email_service = HtmlBuilder(config=config, html_file_path=None, output_file=output_file)
-#            soup = email_service.parse_html()
-#            modified_html = email_service.modify_html_multiple(soup, links=email_to_send.links)
-#            email_service.save_modified_html_to_file(modified_html)
-#            emails = [email_to_send.email]
-#            email_service.send_emails(modified_html, emails)
 
 def lambda_handler(event, context):
-    cpf_or_cnpj = event.get('cpf_or_cnpj')
-
+    body_value = event.get("body")
+    body_data = json.loads(body_value)
+    links = body_data.get("links")
+    email = body_data.get("email")
     facade = Facade()
-    facade.process_records(cpf_or_cnpj)
 
-    output_file = '/path/to/output/email_output.html'
-    # facade.send_single(output_file)
+    output_file_path = '/tmp/email_output.html'
+    print(links)
+    if len(links) > 1:
+        input_file_path = html_content_multiple_page
+        facade.send_multiple(input_file_path, output_file_path, links, email)
+    else:
+        input_file_path = html_content_single_page
+        facade.send_single(input_file_path, output_file_path, links, email)
 
 
 if __name__ == "__main__":
-    cpf_or_cnpj_input = '22308464852'
-
     facade_instance = Facade()
-    facade_instance.process_records(cpf_or_cnpj_input)
+    input_file_path = '/home/matheus/Documents/fix/tax-returns/src/TaxReturnsSendEmail/html/single_email.html'
+    output_file_path = '/home/matheus/Documents/fix/tax-returns/src/TaxReturnsSendEmail/html/email_output.html'
+    body = json.dumps({
+        "email": "matheus.santos@pontte.com.br",
+        "links": [
+            "https://ir-tax-returns.s3.amazonaws.com/ir-tax-returns/ir-2023/IR_2022_129241.pdf",
+        ]
+    })
 
-    output_file_path = '/path/to/output/email_output.html'
-    #  facade_instance.send_single(output_file_path)
-    #  facade_instance.send_multiple(output_file_path)
+    event = {"body": body}
+
+    lambda_handler(event, {})

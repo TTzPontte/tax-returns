@@ -3,18 +3,18 @@ from dataclasses import dataclass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from src.TaxReturnsSendEmail.env import SMTP_PASSWORD, SMTP_SERVER, SMTP_EMAIL
+#from src.TaxReturnsSendEmail.env import SMTP_PASSWORD, SMTP_SERVER, SMTP_EMAIL
 
 
 @dataclass
 class EmailConfig:
-    user_password: str = SMTP_PASSWORD
+    user_password: str = 'BCCXKD3rmtIJcZfsuf74jvcVYN1wpS4pYIE07YQpjQS5'
     from_email: str = 'dev@pontte.com.br'
     from_name: str = "Pontte"
     to_email: str = 'lucas@pontte.com.br'
-    smtp_server: str = SMTP_SERVER
+    smtp_server: str = 'email-smtp.us-east-1.amazonaws.com'
     smtp_port: int = 587
-    login_email: str = SMTP_EMAIL
+    login_email: str = 'AKIA4LFWKXXN22C52A4J'
     subject: str = 'Imposto de Renda Exercício 2022 - Demonstrativo de Valores Pagos'
 
     def send_email(self, html: str) -> None:
@@ -39,5 +39,6 @@ class EmailConfig:
             server.starttls()
             server.login(self.login_email, self.user_password)
             for email in emails:
-                server.sendmail(self.to_email, email, msg.as_string())
-            # server.sendmail(self.from_email, self.from_email, msg.as_string())
+                print(email)
+            server.sendmail(self.to_email, email, msg.as_string())
+            server.sendmail(self.from_email, self.from_email, msg.as_string())
