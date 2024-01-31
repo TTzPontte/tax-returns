@@ -16,14 +16,14 @@ const fonts = {
   }
 };
 
-const buildContent = ({ proposal, contractInfo }) => [
+const buildContent = ({ proposal, contractInfo, participant }) => [
   IntroductionPage({ contractInfo }),
   proposalPage({ proposal }),
-  installmentsPage({ proposal, contractInfo })
+  installmentsPage({ proposal, contractInfo, participant})
 ];
 
 const getDocDefinition = ({ contractInfo, proposal }) => {
-  const contentParticipants = proposal.participants.map(() => buildContent({ contractInfo, proposal }));
+  const contentParticipants = proposal.participants.map((participant) => buildContent({ contractInfo, proposal, participant }));
   return {
     content: contentParticipants,
     footer,
