@@ -11,7 +11,7 @@ const header = (page, part, stacks) => {
   stacks.forEach((stack, index) => {
     const pageNumbers = stack.positions.map(position => [position.pageNumber, index]);
     const currentPage = pageNumbers.find(number => number[0] === page);
-
+    
     if(currentPage){
       if(currentPage[1] > previousIndex){
         previousIndex = currentPage[1]

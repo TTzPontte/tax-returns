@@ -21,7 +21,7 @@ exports.handler = async (event, context) => {
           Participants: { items: participants },
         },
       },
-    } = event;
+    } = JSON.parse(event)
 
     const contractInfo = {
       total,
@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
       },
     });
 
-    const s3FileName = `${contractInfo.development}.pdf`;
+    const s3FileName = `${contractInfo.contractNumber}.pdf`;
 
     const s3Bucket =
       environment === "dev"
@@ -74,15 +74,25 @@ exports.handler = async (event, context) => {
       Body: pdfBuffer,
       ContentType: "application/pdf",
     };
+    
+    const expiration = 10 * 365 * 24 * 60 * 60; // 10 anos em segundos
 
-    await s3.upload(s3Params).promise();
+
+    const s3upload = await s3.upload(s3Params).promise()
+    
+    const params = { Bucket: s3upload.Bucket, Key: s3upload.Key, Expires: expiration,ResponseContentDisposition: `attachment; filename="${contractInfo.contractNumber}.pdf"` };
+
+    const signedUrl = s3.getSignedUrl('getObject', params);
+
 
     console.log(`PDF salvo com sucesso no S3: ${s3Params.Bucket}/${s3Params.Key}`);
-
-    return {
-      statusCode: 200,
-      body: "Success",
-    };
+    if(s3upload){
+      return {
+        statusCode: 200,
+        body: signedUrl
+      };
+    
+    }
   } catch (error) {
     console.error(error);
     return {
