@@ -11,7 +11,7 @@ const formatPercentage = (value = 0) =>
     ? `${Number(value)
         .toFixed(2)
         .replace('.', ',')}%`
-    : '0,00%';
+    : '0%';
 
 const removeFormatMoney = value => (typeof value !== 'string' ? value : parseFloat(value.replace(/[R$ .]/g, '').replace(',', '.')));
 

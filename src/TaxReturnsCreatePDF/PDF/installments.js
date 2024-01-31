@@ -106,7 +106,7 @@ const installmentsPage = ({
 }) => ({
   stack: [
     createHeadline(
-      `TITULAR: ${participant.name}`, `SALDO DEVEDOR EM 31/12/2023: R$ ${parseInt(balance).toFixed(2)}` 
+      `TITULAR: ${participant.name}`, `SALDO DEVEDOR EM 31/12/2023: ${formatMoney(balance)}` 
     ),
     installmentsTable({
       installments,
