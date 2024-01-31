@@ -2,7 +2,7 @@
 
 from dataclasses import field, dataclass
 from IR import parse_json
-from helpers.aztronic import get_ir, get_data
+from layers.common import get_ir, get_data
 from Models.client import GqlClient
 from Models.dao import TaxReturnsFacade
 

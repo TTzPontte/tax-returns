@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from .client import GqlClient
+from .graphql_client import GqlClient
 from .mutations import (
     gql_mutation_create_contract,
     gql_mutation_create_installment,

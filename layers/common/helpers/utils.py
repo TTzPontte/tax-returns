@@ -1,20 +1,10 @@
-# %%
-# def parse_to_brl(value):
-#     return "R$ {:,.2f}".format(value)
 import re
 
 from .aztronic import get_client
+from datetime import datetime
+from numbers import Number
 
 
-# def parse_to_brl(num):
-#     if num == 0:
-#         return "R$ 0,00"
-#     parts = str(num).split('.')
-#     int_part = parts[0][::-1]
-#     dec_part = parts[1][::-1] if len(parts) > 1 else None
-#     formatted_int_part = ".".join([int_part[i:i + 3][::-1] for i in range(0, len(int_part), 3)])[::-1]
-#     formatted_number = formatted_int_part + ("," + dec_part if dec_part else "")
-#     return 'R$ ' + str(formatted_number)
 def parse_to_brl(f):
     if f == 0:
         return "R$ 0,00"
@@ -44,17 +34,6 @@ def is_valid_email(email):
     return bool(email_regex.match(email))
 
 
-# 1000000.00  -> 1, 000, 000.00
-# 1, 234, 609.45  -> 1234609.45
-
-
-# %%
-import json
-from datetime import datetime
-from numbers import Number
-
-
-# sys.path.append(os.path.join("..", "PorttalUsuario", "remover_acesso", "Relação_contratos.xlsx"))
 def build_date(date):
     if isinstance(date, Number):
         return datetime.fromtimestamp(date / 1000).strftime('%Y-%m-%dT%H:%M:%SZ')

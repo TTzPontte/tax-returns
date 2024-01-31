@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from dateutil.parser import parse as parse_date
-from helpers.utils import parse_to_brl, format_br_doc, get_client_email
+from layers.common import format_br_doc, get_client_email
 
 
 @dataclass

@@ -1,8 +1,8 @@
 import json
 import boto3
 
-from layers.common.Models.client import GqlClient
-from layers.common.Models.dao import AppSyncDao
+from layers.common import GqlClient
+from layers.common import AppSyncDao
 
 
 def invoke_lambda_function(event):

@@ -24,6 +24,13 @@ class ContractInfo:
 
 
 @dataclass
+class ParticipantInfo:
+    name: str
+    email: str
+    documentNumber: str
+    participationPercentage: float
+
+@dataclass
 class InstallmentInfo:
     amountPayed: float
     creditDate: str
