@@ -36,6 +36,27 @@ const creatHeader = (
 ];
 
 const createRow = ({ installments = [] }) => {
+  const options = {
+    alignment: "center",
+    color: $MAIN_DARK,
+    fontSize: 10
+  };
+
+  if (installments.length === 0) {
+    const emptyRowTemplate = month => [
+      { text: month, ...options },
+      { text: 'Entrada / Mensal / Intermediária / Final', ...options },
+      { text: 'R$ 0,00', ...options },
+    ];
+
+    const emptyRows = Array.from({ length: 12 }, (_, index) => {
+      const month = `${(index + 1).toString().padStart(2, '0')}/2023`;
+      return emptyRowTemplate(month);
+    });
+
+    return emptyRows;
+  }
+
   const sortedInstallments = installments.sort((a, b) => {
     const [monthA, yearA] = a.creditDate.split('/').map(Number);
     const [monthB, yearB] = b.creditDate.split('/').map(Number);
@@ -47,23 +68,27 @@ const createRow = ({ installments = [] }) => {
     return monthA - monthB;
   });
 
-  const options = {
-    alignment: "center",
-    color: $MAIN_DARK,
-    fontSize: 10
-  };
+  const uniqueMonths = Array.from(new Set(sortedInstallments.map(item => item.creditDate)));
 
-  const data = sortedInstallments.map((installmentItem) => {
+  const data = uniqueMonths.map(creditDate => {
+    const installmentItem = sortedInstallments.find(item => item.creditDate === creditDate);
+
+    const [month, year] = creditDate.split('/');
+    const formattedCreditDate = `${month.padStart(2, '0')}/${year}`;
+
     if (installmentItem) {
-      const { creditDate, payedInstallment, amountPayed } = installmentItem;
-
-      const [month, year] = creditDate.split('/');
-      const formattedCreditDate = `${month.padStart(2, '0')}/${year}`;
+      const { amountPayed } = installmentItem;
 
       return [
         { text: formattedCreditDate, ...options },
         { text: 'Entrada / Mensal / Intermediária / Final', ...options },
         { text: formatMoney(amountPayed), ...options },
+      ];
+    } else {
+      return [
+        { text: formattedCreditDate, ...options },
+        { text: 'Entrada / Mensal / Intermediária / Final', ...options },
+        { text: 'R$ 0,00', ...options },
       ];
     }
   });
@@ -96,15 +121,17 @@ const installmentsTable = ({ installments, total = "10000000,00000" }) => ({
   },
   layout,
   margin: [0, 0, 0, 10],
+  pageBreak: "after",
 });
 
 const installmentsPage = ({
   proposal: { installment: installments, participants },
   contractInfo: { balance = "0,00", total = "0,00", name = 'teste' },
+  participant
 }) => ({
   stack: [
     createHeadline(
-      `TITULAR: ${participants[0].name}`, `SALDO DEVEDOR EM 31/12/2023: ${balance}` 
+      `TITULAR: ${participant.name}`, `SALDO DEVEDOR EM 31/12/2023: ${formatMoney(balance)}` 
     ),
     installmentsTable({
       installments,
