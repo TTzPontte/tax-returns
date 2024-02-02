@@ -21,7 +21,7 @@ exports.handler = async (event, context) => {
           Participants: { items: participants },
         },
       },
-    } = JSON.parse(event)
+    } = JSON.parse(event.body)
 
     const contractInfo = {
       total,

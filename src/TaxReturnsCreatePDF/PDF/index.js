@@ -16,7 +16,7 @@ const fonts = {
   }
 };
 
-const buildContent = ({ proposal, contractInfo,participant }) => [
+const buildContent = ({ proposal, contractInfo, participant }) => [
   IntroductionPage({ contractInfo }),
   proposalPage({ proposal }),
   installmentsPage({ proposal, contractInfo, participant})
@@ -25,6 +25,8 @@ const buildContent = ({ proposal, contractInfo,participant }) => [
 const getDocDefinition = ({ contractInfo, proposal }) => {
   const sortedParticipants = proposal.participants.sort((a, b) => parseFloat(b.participationPercentage) - parseFloat(a.participationPercentage));
   const contentParticipants = sortedParticipants.map((participant) => buildContent({ contractInfo, proposal, participant }));
+  
+  console.log("lenth de participantes",contentParticipants.length)
   return {
     content: contentParticipants,
     footer,

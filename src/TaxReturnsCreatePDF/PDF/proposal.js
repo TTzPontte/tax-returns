@@ -1,4 +1,4 @@
-const { formatPercentage } = require('./helpers/number');
+const { formatPercentage, formatCpfCnpj } = require('./helpers/number');
 const {
   fillColor,
   ColorScheme: { $MAIN_PURPLE, $WHITE }
@@ -40,7 +40,7 @@ const participantsSection = ({ name = 'PADANIA CONSULTORIA EIRELI', documentNumb
     body: [
       [formatValue('PAGADOR'), ''],
       ['NOME/RAZÃO SOCIAL', name],
-      ['CPF/CNPJ', documentNumber],
+      ['CPF/CNPJ', formatCpfCnpj(documentNumber)],
       ['PARTICIPAÇÃO', formatValue(formatPercentage(participationPercentage))]
     ]
   },

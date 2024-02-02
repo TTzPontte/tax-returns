@@ -21,7 +21,6 @@ const header = (page, part, stacks) => {
        yearBase = ''
       }
     }
-    
   });
 
   return [
