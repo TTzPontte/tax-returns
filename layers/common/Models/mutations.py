@@ -39,6 +39,18 @@ gql_query_get_contractInfo = """
 }
 """
 
+gql_query_get_participants_by_document_number = """
+query GetParticipantsByDocumentNumber($documentNumber: String!) {
+  listParticipants(filter: { documentNumber: { eq: $documentNumber } }) {
+    items {
+      documentNumber
+      email
+      id
+      contractinfoID
+    }
+  }
+}
+"""
 
 gql_mutation_create_contract = """
     mutation CreateContract(

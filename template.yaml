@@ -228,5 +228,26 @@ Resources:
           Type: Api
           Properties:
             Path: /tax-returns/{taxReturnId}/generate-pdf
+            Method: get
+      Role: !GetAtt ExecutionRole.Arn
+
+  TaxReturnsSendEmail:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/TaxReturnsSendEmail
+      FunctionName: !Sub "TaxReturnsSendEmail-${Stage}"
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 30
+      Layers:
+        - !Ref TaxReturnsLibrariesLayer
+        - !Ref TaxReturnsCommonLayer
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /tax-returns/send_email
             Method: post
       Role: !GetAtt ExecutionRole.Arn
