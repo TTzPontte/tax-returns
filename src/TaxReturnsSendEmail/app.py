@@ -58,10 +58,13 @@ class Facade:
             email_service.send_emails(modified_html, emails)
 
 def lambda_handler(event, context):
-    body_value = json.loads(event['body'])
-    print("BODY value:", body_value)
+    print(event)
+    body_value = json.dumps(event)
+    
+    body_parsed = json.loads(body_value)
+    print("BODY body_parsed:", body_parsed)
 
-    body_data = body_value.get("body")
+    body_data = body_parsed.get("body")
     print("Body Data:", body_data)
 
     links = body_data.get("links")

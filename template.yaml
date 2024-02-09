@@ -207,6 +207,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                  - ssm:GetParameter
                 Resource: '*'
 
 
@@ -241,7 +242,6 @@ Resources:
       Timeout: 30
       Layers:
         - !Ref TaxReturnsLibrariesLayer
-        - !Ref TaxReturnsCommonLayer
       Architectures:
         - x86_64
       Events:
@@ -250,4 +250,4 @@ Resources:
           Properties:
             Path: /tax-returns/send_email
             Method: post
-      Role: !GetAtt ExecutionRole.Arn
+      Role: !GetAtt ExecutionRole.Arn  
