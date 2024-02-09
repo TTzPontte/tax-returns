@@ -1,11 +1,12 @@
-import json
 from dataclasses import dataclass
 from typing import List
 
+import multiple_page
+import single_page
+import json
+
 from Builder.EmailConfig import EmailConfig
 from Builder.html_builder import HtmlBuilder
-from single_page import html_content_single_page
-from multiple_page import html_content_multiple_page
 
 
 @dataclass
@@ -31,8 +32,11 @@ class Facade:
 
     def __post_init__(self):
         self.email_list = []
+
     def send_single(self, input_file_path: str, output_file: str, links, email):
         email_list = [email]
+
+        print(email_list)
         for email_to_send in email_list:
             config = EmailConfig(to_email=email_to_send)
             email_service = HtmlBuilder(config=config, html_file_path=input_file_path, output_file=output_file)
@@ -40,6 +44,7 @@ class Facade:
             modified_html = email_service.modify_html_single(soup, links=links)
             email_service.save_modified_html_to_file(modified_html)
             emails = [email_to_send]
+            print(emails)
             email_service.send_emails(modified_html, emails)
 
     def send_multiple(self, input_file_path: str, output_file: str, links, email):
@@ -51,23 +56,27 @@ class Facade:
             modified_html = email_service.modify_html_multiple(soup, links=links)
             email_service.save_modified_html_to_file(modified_html)
             emails = [email_to_send]
+            print(emails)
             email_service.send_emails(modified_html, emails)
 
-
 def lambda_handler(event, context):
-    body_value = event.get("body")
-    body_data = json.loads(body_value)
+    body_value = json.loads(event['body'])
+    print("BODY value:", body_value)
+
+    body_data = body_value.get("body")
+    print("Body Data:", body_data)
+
     links = body_data.get("links")
     email = body_data.get("email")
-    facade = Facade()
 
+    print(links, email)
+    facade = Facade()
     output_file_path = '/tmp/email_output.html'
-    print(links)
     if len(links) > 1:
-        input_file_path = html_content_multiple_page
+        input_file_path = multiple_page.html_content_multiple_page
         facade.send_multiple(input_file_path, output_file_path, links, email)
     else:
-        input_file_path = html_content_single_page
+        input_file_path = single_page.html_content_single_page
         facade.send_single(input_file_path, output_file_path, links, email)
 
 
