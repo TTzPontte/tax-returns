@@ -2,22 +2,27 @@ import smtplib
 from dataclasses import dataclass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import boto3
 
-#from src.TaxReturnsSendEmail.env import SMTP_PASSWORD, SMTP_SERVER, SMTP_EMAIL
+ssm = boto3.client('ssm')
+login = ssm.get_parameter(Name='/taxreturns/email/login', WithDecryption=True)
+password = ssm.get_parameter(Name='/taxreturns/email/user-password', WithDecryption=True)
 
 
 @dataclass
 class EmailConfig:
-    user_password: str = 'BCCXKD3rmtIJcZfsuf74jvcVYN1wpS4pYIE07YQpjQS5'
+    user_password: str = password['Parameter']['Value']
     from_email: str = 'dev@pontte.com.br'
     from_name: str = "Pontte"
     to_email: str = 'lucas@pontte.com.br'
     smtp_server: str = 'email-smtp.us-east-1.amazonaws.com'
     smtp_port: int = 587
-    login_email: str = 'AKIA4LFWKXXN22C52A4J'
+    login_email: str = login['Parameter']['Value']
     subject: str = 'Imposto de Renda Exercício 2022 - Demonstrativo de Valores Pagos'
 
     def send_email(self, html: str) -> None:
+        print("usguriii", password, user_password)
+
         msg = MIMEMultipart()
         msg['From'] = f"{self.from_name} <{self.from_email}>"
         msg['To'] = self.from_email
