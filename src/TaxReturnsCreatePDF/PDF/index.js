@@ -23,6 +23,8 @@ const buildContent = ({ proposal, contractInfo, participant }) => [
 ];
 
 const getDocDefinition = ({ contractInfo, proposal }) => {
+  let previousIndex = -1;
+
   const sortedParticipants = proposal.participants.sort((a, b) => parseFloat(b.participationPercentage) - parseFloat(a.participationPercentage));
   const contentParticipants = sortedParticipants.map((participant) => buildContent({ contractInfo, proposal, participant }));
   
@@ -30,7 +32,7 @@ const getDocDefinition = ({ contractInfo, proposal }) => {
   return {
     content: contentParticipants,
     footer,
-    header: page => header(page, proposal.participants, contentParticipants),
+    header: page => header(page, proposal.participants, contentParticipants, previousIndex),
     pageSize: 'A4',
     pageMargins: [40, 80, 40, 80],
     styles: {

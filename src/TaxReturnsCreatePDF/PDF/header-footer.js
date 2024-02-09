@@ -4,8 +4,7 @@ const {
   ColorScheme: { $MAIN_PURPLE }
 } = require('./constants');
 
-let previousIndex = -1
-const header = (page, part, stacks) => {
+const header = (page, part, stacks, previousIndex) => {
   let header = '';
   let yearBase = 'ANO BASE 2023'
   stacks.forEach((stack, index) => {
