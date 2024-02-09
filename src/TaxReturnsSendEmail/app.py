@@ -36,7 +36,6 @@ class Facade:
     def send_single(self, input_file_path: str, output_file: str, links, email):
         email_list = [email]
 
-        print(email_list)
         for email_to_send in email_list:
             config = EmailConfig(to_email=email_to_send)
             email_service = HtmlBuilder(config=config, html_file_path=input_file_path, output_file=output_file)
@@ -44,7 +43,6 @@ class Facade:
             modified_html = email_service.modify_html_single(soup, links=links)
             email_service.save_modified_html_to_file(modified_html)
             emails = [email_to_send]
-            print(emails)
             email_service.send_emails(modified_html, emails)
 
     def send_multiple(self, input_file_path: str, output_file: str, links, email):
